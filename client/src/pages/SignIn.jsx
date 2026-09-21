@@ -67,14 +67,16 @@ function SignIn() {
       if (!response.ok) {
         if (response.status === 404) {
           setFieldErrors({
-            login: "We couldn't find an account with that username or email.",
+            login:
+              "We couldn't find an account with that username or email.",
           });
 
           return;
         }
 
         if (response.status === 401) {
-          const errorCode = data.code || data.error_code;
+          const errorCode =
+            data.code || data.error_code;
 
           if (errorCode === "USER_NOT_FOUND") {
             setFieldErrors({
@@ -107,13 +109,17 @@ function SignIn() {
             const errors = {};
 
             if (data.errors.login) {
-              errors.login = Array.isArray(data.errors.login)
+              errors.login = Array.isArray(
+                data.errors.login
+              )
                 ? data.errors.login[0]
                 : data.errors.login;
             }
 
             if (data.errors.password) {
-              errors.password = Array.isArray(data.errors.password)
+              errors.password = Array.isArray(
+                data.errors.password
+              )
                 ? data.errors.password[0]
                 : data.errors.password;
             }
@@ -159,28 +165,93 @@ function SignIn() {
       }
 
       if (rememberMe) {
-        localStorage.setItem("authToken", data.token);
+        localStorage.setItem(
+          "authToken",
+          data.token
+        );
 
         if (data.user) {
-          localStorage.setItem("user", JSON.stringify(data.user));
+          localStorage.setItem(
+            "user",
+            JSON.stringify(data.user)
+          );
         }
 
-        sessionStorage.removeItem("authToken");
+        sessionStorage.removeItem(
+          "authToken"
+        );
         sessionStorage.removeItem("user");
       } else {
-        sessionStorage.setItem("authToken", data.token);
+        sessionStorage.setItem(
+          "authToken",
+          data.token
+        );
 
         if (data.user) {
-          sessionStorage.setItem("user", JSON.stringify(data.user));
+          sessionStorage.setItem(
+            "user",
+            JSON.stringify(data.user)
+          );
         }
 
         localStorage.removeItem("authToken");
         localStorage.removeItem("user");
       }
 
-      navigate("/");
+      /*
+       * Mobile Safari can retain the scroll position created
+       * while the keyboard is open. Blur the active field first
+       * so the keyboard closes before navigating.
+       */
+      if (
+        document.activeElement instanceof
+        HTMLElement
+      ) {
+        document.activeElement.blur();
+      }
+
+      /*
+       * Reset immediately before navigation.
+       */
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "auto",
+      });
+
+      /*
+       * Replace the sign-in page with Home so Back does not
+       * immediately return the user to the completed login form.
+       */
+      navigate("/", {
+        replace: true,
+      });
+
+      /*
+       * Reset again after React renders the new route.
+       * The small delayed reset specifically helps iOS Safari
+       * after its keyboard / visual viewport finishes collapsing.
+       */
+      requestAnimationFrame(() => {
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: "auto",
+        });
+      });
+
+      window.setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: "auto",
+        });
+      }, 100);
     } catch (error) {
-      console.error("Sign in request failed:", error);
+      console.error(
+        "Sign in request failed:",
+        error
+      );
 
       setFormError(
         "We couldn't connect to the server. Please try again."
@@ -241,7 +312,8 @@ function SignIn() {
             </h1>
 
             <p className="mt-3 text-stone-600">
-              Welcome back. Sign in to your account.
+              Welcome back. Sign in to your
+              account.
             </p>
           </div>
 
@@ -275,9 +347,13 @@ function SignIn() {
                 placeholder="Username or email"
                 value={login}
                 onChange={handleLoginChange}
-                aria-invalid={Boolean(fieldErrors.login)}
+                aria-invalid={Boolean(
+                  fieldErrors.login
+                )}
                 aria-describedby={
-                  fieldErrors.login ? "login-error" : undefined
+                  fieldErrors.login
+                    ? "login-error"
+                    : undefined
                 }
                 className={`w-full rounded-xl border bg-white px-4 py-3.5 text-stone-900 outline-none transition placeholder:text-stone-400 focus:ring-2 ${
                   fieldErrors.login
@@ -308,14 +384,24 @@ function SignIn() {
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? "text" : "password"}
+                  type={
+                    showPassword
+                      ? "text"
+                      : "password"
+                  }
                   autoComplete="current-password"
                   placeholder="Enter your password"
                   value={password}
-                  onChange={handlePasswordChange}
-                  aria-invalid={Boolean(fieldErrors.password)}
+                  onChange={
+                    handlePasswordChange
+                  }
+                  aria-invalid={Boolean(
+                    fieldErrors.password
+                  )}
                   aria-describedby={
-                    fieldErrors.password ? "password-error" : undefined
+                    fieldErrors.password
+                      ? "password-error"
+                      : undefined
                   }
                   className={`w-full rounded-xl border bg-white px-4 py-3.5 pr-12 text-stone-900 outline-none transition placeholder:text-stone-400 focus:ring-2 ${
                     fieldErrors.password
@@ -327,7 +413,9 @@ function SignIn() {
                 <button
                   type="button"
                   onClick={() =>
-                    setShowPassword((current) => !current)
+                    setShowPassword(
+                      (current) => !current
+                    )
                   }
                   className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-lg p-2 text-stone-500 transition hover:bg-stone-100 hover:text-red-800"
                   aria-label={
@@ -341,7 +429,11 @@ function SignIn() {
                       : "Show password"
                   }
                 >
-                  {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                  {showPassword ? (
+                    <EyeOffIcon />
+                  ) : (
+                    <EyeIcon />
+                  )}
                 </button>
               </div>
 
@@ -361,7 +453,9 @@ function SignIn() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(event) =>
-                    setRememberMe(event.target.checked)
+                    setRememberMe(
+                      event.target.checked
+                    )
                   }
                   className="h-4 w-4 rounded border-stone-300 accent-red-800"
                 />
@@ -382,7 +476,9 @@ function SignIn() {
               disabled={isSubmitting}
               className="w-full rounded-full bg-red-800 px-5 py-3.5 font-semibold text-white shadow-sm transition duration-200 hover:bg-red-900 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isSubmitting ? "Signing In..." : "Sign In"}
+              {isSubmitting
+                ? "Signing In..."
+                : "Sign In"}
             </button>
           </form>
 
