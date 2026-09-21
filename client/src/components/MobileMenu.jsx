@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 
-import topLeaves from "../assets/leaves-top.png";
 import bottomLeaves from "../assets/leaves-bottom.png";
 
 function MobileMenu({
@@ -61,17 +60,9 @@ function MobileMenu({
             </button>
           </div>
 
-          {/* Top botanical artwork */}
-          <img
-            src={topLeaves}
-            alt=""
-            aria-hidden="true"
-            className="pointer-events-none w-full shrink-0 select-none object-contain"
-          />
-
           {/* Logged-in mobile identity */}
           {user && (
-            <div className="relative z-10 mx-6 mb-2 shrink-0 rounded-2xl border border-stone-200 bg-white/80 px-5 py-4 shadow-sm">
+            <div className="relative z-10 mx-6 mt-6 mb-2 shrink-0 rounded-2xl border border-stone-200 bg-white/80 px-5 py-4 shadow-sm">
               <div className="flex items-center justify-between gap-4">
                 <div className="min-w-0">
                   <p className="truncate text-lg font-semibold text-stone-900">
