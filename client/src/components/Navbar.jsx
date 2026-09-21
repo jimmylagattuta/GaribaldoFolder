@@ -132,12 +132,10 @@ function Navbar() {
                   aria-expanded={accountOpen}
                   aria-label="Open account menu"
                 >
-                  {/* Name stays perfectly aligned with nav items */}
                   <span className="whitespace-nowrap text-sm font-semibold text-stone-900">
                     Hi, {user.first_name}
                   </span>
 
-                  {/* Admin badge sits lower without affecting name alignment */}
                   {isAdmin && (
                     <span className="absolute bottom-[4px] left-5 flex items-center gap-1 whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.15em] text-red-800">
                       <ShieldIcon />
@@ -145,7 +143,6 @@ function Navbar() {
                     </span>
                   )}
 
-                  {/* Chevron */}
                   <svg
                     viewBox="0 0 20 20"
                     fill="none"
@@ -191,6 +188,37 @@ function Navbar() {
                       </div>
                     )}
                   </div>
+
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setAccountOpen(false)}
+                      className="mt-2 flex w-full items-center justify-between rounded-xl px-4 py-3 font-medium text-stone-800 transition hover:bg-stone-100"
+                    >
+                      <span className="flex items-center gap-3">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 text-red-800">
+                          <DashboardIcon />
+                        </span>
+
+                        Admin Dashboard
+                      </span>
+
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        className="h-4 w-4 text-stone-400"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M9 6L15 12L9 18"
+                          stroke="currentColor"
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </Link>
+                  )}
 
                   <button
                     type="button"
@@ -274,6 +302,57 @@ function ShieldIcon() {
         strokeWidth="1.8"
         strokeLinecap="round"
         strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function DashboardIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      className="h-4 w-4"
+      aria-hidden="true"
+    >
+      <rect
+        x="4"
+        y="4"
+        width="6"
+        height="6"
+        rx="1.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+
+      <rect
+        x="14"
+        y="4"
+        width="6"
+        height="6"
+        rx="1.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+
+      <rect
+        x="4"
+        y="14"
+        width="6"
+        height="6"
+        rx="1.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+
+      <rect
+        x="14"
+        y="14"
+        width="6"
+        height="6"
+        rx="1.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
       />
     </svg>
   );

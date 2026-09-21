@@ -127,6 +127,40 @@ function MobileMenu({
               Contact
             </Link>
 
+            {/* Admin-only dashboard */}
+            {isAdmin && (
+              <Link
+                to="/admin"
+                onClick={closeMenu}
+                className="mt-6 flex items-center justify-between rounded-2xl border border-red-800/20 bg-red-50 px-5 py-4 text-red-800 shadow-sm transition hover:bg-red-100"
+              >
+                <span className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white shadow-sm">
+                    <DashboardIcon />
+                  </span>
+
+                  <span className="font-semibold">
+                    Admin Dashboard
+                  </span>
+                </span>
+
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="h-5 w-5"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M9 6L15 12L9 18"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </Link>
+            )}
+
             {/* Logged in */}
             {user ? (
               <button
@@ -190,6 +224,57 @@ function ShieldIcon() {
         strokeWidth="1.8"
         strokeLinecap="round"
         strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function DashboardIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      className="h-5 w-5"
+      aria-hidden="true"
+    >
+      <rect
+        x="4"
+        y="4"
+        width="6"
+        height="6"
+        rx="1.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+
+      <rect
+        x="14"
+        y="4"
+        width="6"
+        height="6"
+        rx="1.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+
+      <rect
+        x="4"
+        y="14"
+        width="6"
+        height="6"
+        rx="1.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+
+      <rect
+        x="14"
+        y="14"
+        width="6"
+        height="6"
+        rx="1.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
       />
     </svg>
   );

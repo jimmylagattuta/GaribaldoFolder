@@ -10,6 +10,8 @@ import Contact from "./pages/Contact";
 import SignIn from "./pages/SignIn";
 import ForgotPassword from "./pages/ForgotPassword";
 import Register from "./pages/Register";
+import AdminDashboard from "./pages/AdminDashboard";
+import AddProduct from "./pages/AddProduct";
 
 function App() {
   return (
@@ -23,9 +25,19 @@ function App() {
           <Route path="/plants" element={<Plants />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+
           <Route path="/signin" element={<SignIn />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route
+            path="/forgot-password"
+            element={<ForgotPassword />}
+          />
           <Route path="/register" element={<Register />} />
+
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route
+            path="/admin/products/new"
+            element={<AddProduct />}
+          />
         </Routes>
       </main>
     </div>
