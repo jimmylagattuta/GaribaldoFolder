@@ -1,281 +1,196 @@
 import { Link } from "react-router-dom";
 
 import topLeaves from "../assets/leaves-top.png";
+import bottomLeaves from "../assets/leaves-bottom.png";
 
 function MobileMenu({
-  isOpen,
-  onClose,
+  menuOpen,
+  setMenuOpen,
   user,
   onSignOut,
 }) {
-  const isLoggedIn = Boolean(user);
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+
   const isAdmin = user?.role === "admin";
 
-  if (!isOpen) {
-    return null;
-  }
-
-  const firstName =
-    user?.first_name ||
-    user?.firstName ||
-    user?.username ||
-    "there";
-
-  const fullName = [
-    user?.first_name,
-    user?.last_name,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const handleSignOut = () => {
+    closeMenu();
+    onSignOut();
+  };
 
   return (
-    <div className="fixed inset-0 z-[100]">
-      {/* Backdrop */}
-      <button
-        type="button"
-        aria-label="Close navigation menu"
-        onClick={onClose}
-        className="absolute inset-0 bg-stone-950/45 backdrop-blur-[2px]"
+    <>
+      {/* Background overlay */}
+      <div
+        onClick={closeMenu}
+        className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px] transition-opacity duration-300 md:hidden ${
+          menuOpen
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
+        }`}
       />
 
       {/* Drawer */}
       <aside
-        className="
-          absolute
-          right-0
-          top-0
-          h-[100dvh]
-          w-[84%]
-          max-w-[390px]
-          overflow-y-auto
-          overscroll-contain
-          bg-[#fffdf8]
-          shadow-2xl
-          [-webkit-overflow-scrolling:touch]
-        "
+        className={`fixed right-0 top-0 z-50 h-[100dvh] w-[85%] max-w-sm overflow-y-auto overscroll-contain bg-[#fffdf8] shadow-2xl transition-transform duration-300 ease-out [-webkit-overflow-scrolling:touch] md:hidden ${
+          menuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
       >
-        <div className="relative min-h-full overflow-hidden">
+        <div className="relative flex min-h-full flex-col">
           {/* Header */}
-          <div className="sticky top-0 z-30 border-b border-stone-200 bg-[#fffdf8]/95 px-6 pb-6 pt-[calc(env(safe-area-inset-top)+24px)] backdrop-blur-md">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-sm font-bold uppercase tracking-[0.25em] text-red-800">
-                  Garibaldo&apos;s
-                </p>
+          <div className="sticky top-0 z-30 flex items-center justify-between border-b border-stone-200 bg-[#fffdf8]/95 px-6 py-5 backdrop-blur-md">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-red-800">
+                Garibaldo&apos;s
+              </p>
 
-                <p className="mt-1 text-3xl font-semibold tracking-tight text-stone-900">
-                  Nursery
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label="Close menu"
-                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-stone-700 transition hover:bg-stone-100 hover:text-red-800"
-              >
-                <CloseIcon />
-              </button>
+              <span className="text-xl font-bold text-stone-900">
+                Nursery
+              </span>
             </div>
+
+            <button
+              type="button"
+              onClick={closeMenu}
+              className="text-3xl leading-none text-stone-700 transition hover:rotate-90 hover:text-red-800"
+              aria-label="Close navigation menu"
+            >
+              ×
+            </button>
           </div>
 
-          {/* Leaf artwork */}
-          <div className="pointer-events-none relative h-[330px] overflow-hidden">
-            <img
-              src={topLeaves}
-              alt=""
-              aria-hidden="true"
-              className="absolute left-[-10px] top-6 w-[520px] max-w-none select-none opacity-80"
-            />
-          </div>
+          {/* Top botanical artwork */}
+          <img
+            src={topLeaves}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none w-full shrink-0 select-none object-contain"
+          />
 
-          {/* Scrollable menu content */}
-          <div
-            className="
-              relative
-              z-10
-              px-6
-              pb-[calc(env(safe-area-inset-bottom)+64px)]
-            "
-          >
-            {/* Account card */}
-            {isLoggedIn && (
-              <div className="mb-7 rounded-[26px] border border-stone-200 bg-white p-6 shadow-md">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="min-w-0">
-                    <p className="truncate text-2xl font-semibold text-stone-900">
-                      Hi, {firstName}
-                    </p>
+          {/* Logged-in mobile identity */}
+          {user && (
+            <div className="relative z-10 mx-6 mb-2 shrink-0 rounded-2xl border border-stone-200 bg-white/80 px-5 py-4 shadow-sm">
+              <div className="flex items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <p className="truncate text-lg font-semibold text-stone-900">
+                    Hi, {user.first_name}
+                  </p>
 
-                    {user?.username && (
-                      <p className="mt-2 truncate text-lg text-stone-500">
-                        @{user.username}
-                      </p>
-                    )}
-                  </div>
-
-                  {isAdmin && (
-                    <div className="shrink-0 rounded-full bg-red-800 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-white">
-                      <span className="inline-flex items-center gap-2">
-                        <ShieldIcon />
-                        Admin
-                      </span>
-                    </div>
-                  )}
+                  <p className="mt-0.5 truncate text-sm text-stone-500">
+                    @{user.username}
+                  </p>
                 </div>
 
-                {fullName &&
-                  fullName !== firstName && (
-                    <p className="mt-3 text-sm text-stone-500">
-                      {fullName}
-                    </p>
-                  )}
+                {isAdmin && (
+                  <div className="flex shrink-0 items-center gap-1.5 rounded-full bg-red-800 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-white">
+                    <ShieldIcon />
+                    Admin
+                  </div>
+                )}
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Main navigation */}
-            <nav className="divide-y divide-stone-200">
-              <MobileNavLink
-                to="/shop"
-                onClick={onClose}
-              >
-                Shop
-              </MobileNavLink>
+          {/* Navigation */}
+          <nav className="relative z-10 flex shrink-0 flex-col px-6 py-4">
+            <Link
+              to="/shop"
+              onClick={closeMenu}
+              className="border-b border-stone-200 py-4 text-lg font-medium text-stone-800 transition duration-200 hover:pl-2 hover:text-red-800"
+            >
+              Shop
+            </Link>
 
-              <MobileNavLink
-                to="/plants"
-                onClick={onClose}
-              >
-                Plants
-              </MobileNavLink>
+            <Link
+              to="/plants"
+              onClick={closeMenu}
+              className="border-b border-stone-200 py-4 text-lg font-medium text-stone-800 transition duration-200 hover:pl-2 hover:text-red-800"
+            >
+              Plants
+            </Link>
 
-              <MobileNavLink
-                to="/about"
-                onClick={onClose}
-              >
-                About
-              </MobileNavLink>
+            <Link
+              to="/about"
+              onClick={closeMenu}
+              className="border-b border-stone-200 py-4 text-lg font-medium text-stone-800 transition duration-200 hover:pl-2 hover:text-red-800"
+            >
+              About
+            </Link>
 
-              <MobileNavLink
-                to="/contact"
-                onClick={onClose}
-              >
-                Contact
-              </MobileNavLink>
-            </nav>
+            <Link
+              to="/contact"
+              onClick={closeMenu}
+              className="border-b border-stone-200 py-4 text-lg font-medium text-stone-800 transition duration-200 hover:pl-2 hover:text-red-800"
+            >
+              Contact
+            </Link>
 
             {/* Admin dashboard */}
             {isAdmin && (
               <Link
                 to="/admin"
-                onClick={onClose}
-                className="mt-7 flex items-center justify-between rounded-[24px] border border-red-200 bg-red-50 px-5 py-5 text-red-900 transition hover:border-red-300 hover:bg-red-100"
+                onClick={closeMenu}
+                className="mt-7 flex items-center justify-between rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-red-900 transition hover:border-red-300 hover:bg-red-100"
               >
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-red-700">
                     Admin
                   </p>
 
-                  <p className="mt-1 text-lg font-semibold">
+                  <p className="mt-1 font-semibold">
                     Dashboard
                   </p>
                 </div>
 
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-800 text-white">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-800 text-white">
                   <DashboardIcon />
                 </div>
               </Link>
             )}
 
-            {/* Logged-out action */}
-            {!isLoggedIn && (
+            {/* Logged in */}
+            {user ? (
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="mt-4 w-full rounded-full border-2 border-red-800 bg-transparent px-5 py-3 text-center font-semibold text-red-800 transition hover:bg-red-800 hover:text-white"
+              >
+                Sign Out
+              </button>
+            ) : (
+              /* Logged out */
               <Link
                 to="/signin"
-                onClick={onClose}
-                className="mt-7 flex w-full items-center justify-center rounded-full bg-red-800 px-6 py-4 text-base font-semibold text-white shadow-sm transition hover:bg-red-900 hover:shadow-md"
+                onClick={closeMenu}
+                className="mt-7 rounded-full bg-red-800 px-5 py-3 text-center font-semibold text-white shadow-sm transition hover:bg-red-900"
               >
                 Sign In
               </Link>
             )}
+          </nav>
 
-            {/* Logged-in actions */}
-            {isLoggedIn && (
-              <div className="mt-7">
-                <button
-                  type="button"
-                  onClick={() => {
-                    onSignOut?.();
-                    onClose();
-                  }}
-                  className="flex w-full items-center justify-center gap-2 rounded-full border border-red-200 bg-red-50 px-6 py-4 font-semibold text-red-800 transition hover:bg-red-100"
-                >
-                  <SignOutIcon />
-                  Sign Out
-                </button>
-              </div>
-            )}
+          {/* Bottom artwork */}
+          <div className="mt-auto shrink-0">
+            <img
+              src={bottomLeaves}
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none w-full select-none object-contain"
+            />
 
-            {/* Extra breathing room for iPhone Safari */}
-            <div className="h-8" />
+            <div className="px-6 pb-[calc(env(safe-area-inset-bottom)+40px)] text-center">
+              <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-stone-500">
+                Growing a brighter tomorrow
+              </p>
+
+              <div className="mx-auto mt-3 h-px w-10 bg-stone-400" />
+            </div>
           </div>
         </div>
       </aside>
-    </div>
-  );
-}
-
-function MobileNavLink({
-  to,
-  onClick,
-  children,
-}) {
-  return (
-    <Link
-      to={to}
-      onClick={onClick}
-      className="flex items-center justify-between py-6 text-[1.7rem] font-medium tracking-tight text-stone-900 transition hover:text-red-800"
-    >
-      <span>{children}</span>
-
-      <ArrowIcon />
-    </Link>
-  );
-}
-
-function CloseIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      className="h-8 w-8"
-      aria-hidden="true"
-    >
-      <path
-        d="M6 6L18 18M18 6L6 18"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function ArrowIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      className="h-5 w-5 text-stone-400"
-      aria-hidden="true"
-    >
-      <path
-        d="M9 6L15 12L9 18"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    </>
   );
 }
 
@@ -283,11 +198,22 @@ function ShieldIcon() {
   return (
     <svg
       viewBox="0 0 24 24"
-      fill="currentColor"
-      className="h-4 w-4"
+      fill="none"
+      className="h-3.5 w-3.5"
       aria-hidden="true"
     >
-      <path d="M12 2.5L19 5.3V10.5C19 15.1 16.1 19.2 12 21.5C7.9 19.2 5 15.1 5 10.5V5.3L12 2.5Z" />
+      <path
+        d="M12 3L19 6V11C19 15.55 16.09 19.74 12 21C7.91 19.74 5 15.55 5 11V6L12 3Z"
+        fill="currentColor"
+      />
+
+      <path
+        d="M9 12L11 14L15 10"
+        stroke="white"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -338,32 +264,6 @@ function DashboardIcon() {
         rx="1"
         stroke="currentColor"
         strokeWidth="1.8"
-      />
-    </svg>
-  );
-}
-
-function SignOutIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      className="h-5 w-5"
-      aria-hidden="true"
-    >
-      <path
-        d="M10 5H6C4.9 5 4 5.9 4 7V17C4 18.1 4.9 19 6 19H10"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-
-      <path
-        d="M14 8L18 12L14 16M18 12H9"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
       />
     </svg>
   );
