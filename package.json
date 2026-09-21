@@ -6,6 +6,6 @@
   },
   "scripts": {
     "build": "npm --prefix client run build",
-    "heroku-postbuild": "npm --prefix client ci && npm --prefix client run build"
+    "heroku-postbuild": "npm --prefix client ci --include=dev && npm --prefix client run build"
   }
 }
