@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 * {
   box-sizing: border-box;
 }
@@ -8,46 +10,10 @@ body,
   margin: 0;
   padding: 0;
   width: 100%;
-  min-width: 100%;
   min-height: 100%;
 }
 
 body {
   min-height: 100vh;
   overflow-x: hidden;
-}
-
-.page {
-  width: 100vw;
-  min-height: 100vh;
-  background: #f7f2e8;
-}
-
-.navbar {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  min-height: 110px;
-  padding: 18px 32px;
-  background: #fffdf8;
-  border-bottom: 1px solid rgba(130, 32, 24, 0.12);
-}
-
-.navbar-logo {
-  width: 430px;
-  max-width: 80vw;
-  height: auto;
-  display: block;
-}
-
-@media (max-width: 700px) {
-  .navbar {
-    min-height: 86px;
-    padding: 14px 18px;
-  }
-
-  .navbar-logo {
-    width: 330px;
-    max-width: 92vw;
-  }
 }
