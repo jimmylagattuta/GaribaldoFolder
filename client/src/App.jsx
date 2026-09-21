@@ -12,6 +12,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Register from "./pages/Register";
 import AdminDashboard from "./pages/AdminDashboard";
 import AddProduct from "./pages/AddProduct";
+import EditProduct from "./pages/EditProduct";
 
 function App() {
   return (
@@ -27,16 +28,30 @@ function App() {
           <Route path="/contact" element={<Contact />} />
 
           <Route path="/signin" element={<SignIn />} />
+
           <Route
             path="/forgot-password"
             element={<ForgotPassword />}
           />
-          <Route path="/register" element={<Register />} />
 
-          <Route path="/admin" element={<AdminDashboard />} />
+          <Route
+            path="/register"
+            element={<Register />}
+          />
+
+          <Route
+            path="/admin"
+            element={<AdminDashboard />}
+          />
+
           <Route
             path="/admin/products/new"
             element={<AddProduct />}
+          />
+
+          <Route
+            path="/admin/products/:id/edit"
+            element={<EditProduct />}
           />
         </Routes>
       </main>
