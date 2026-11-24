@@ -4,13 +4,58 @@ import { Link } from "react-router-dom";
 
 import {
   nurseryLocations,
+  getLocationAddress,
   getGoogleMapsEmbedUrl,
   getGoogleMapsUrl,
   getGoogleMapsDirectionsUrl,
 } from "../data/locations";
 
-const GOOGLE_MAPS_ICON =
-  "https://www.gstatic.com/images/branding/product/2x/maps_96dp.png";
+// =============================================
+// NATIVE MAPS SUPPORT
+//
+// iOS     = Apple Maps
+// Android = Installed maps app
+// Desktop = Google Maps browser fallback
+// =============================================
+
+function getPreferredMapsUrl(location, directions = false) {
+  const address = encodeURIComponent(
+    getLocationAddress(location)
+  );
+
+  if (typeof navigator === "undefined") {
+    return directions
+      ? getGoogleMapsDirectionsUrl(location)
+      : getGoogleMapsUrl(location);
+  }
+
+  const userAgent = navigator.userAgent;
+
+  const isIOS =
+    /iPhone|iPad|iPod/i.test(userAgent) ||
+    (navigator.platform === "MacIntel" &&
+      navigator.maxTouchPoints > 1);
+
+  const isAndroid = /Android/i.test(userAgent);
+
+  // Apple Maps opens natively on supported iOS devices.
+  if (isIOS) {
+    return directions
+      ? `https://maps.apple.com/?daddr=${address}&dirflg=d`
+      : `https://maps.apple.com/?q=${address}`;
+  }
+
+  // Android geo: links let the device resolve
+  // which installed Maps application to open.
+  if (isAndroid) {
+    return `geo:0,0?q=${address}`;
+  }
+
+  // Desktop fallback.
+  return directions
+    ? getGoogleMapsDirectionsUrl(location)
+    : getGoogleMapsUrl(location);
+}
 
 function PinIcon({ className = "h-5 w-5" }) {
   return (
@@ -26,6 +71,7 @@ function PinIcon({ className = "h-5 w-5" }) {
         strokeWidth="1.8"
         strokeLinejoin="round"
       />
+
       <circle
         cx="12"
         cy="10"
@@ -52,6 +98,7 @@ function ClockIcon() {
         stroke="currentColor"
         strokeWidth="1.8"
       />
+
       <path
         d="M12 7v5l3.5 2"
         stroke="currentColor"
@@ -117,7 +164,8 @@ function ArrowIcon() {
   );
 }
 
-// Mount Google Maps only when visitors reach this map.
+// Google Maps stays embedded for the preview.
+// It is only mounted after the map becomes visible.
 function LazyGoogleMap({ location }) {
   const containerRef = useRef(null);
   const [shouldLoad, setShouldLoad] = useState(false);
@@ -181,9 +229,11 @@ function LazyGoogleMap({ location }) {
 }
 
 function LocationCard({ location }) {
-  const mapsUrl = getGoogleMapsUrl(location);
-  const directionsUrl =
-    getGoogleMapsDirectionsUrl(location);
+  const mapsUrl = getPreferredMapsUrl(location);
+  const directionsUrl = getPreferredMapsUrl(
+    location,
+    true
+  );
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-xl">
@@ -204,7 +254,7 @@ function LocationCard({ location }) {
         </div>
       </div>
 
-      {/* Lazy-loaded Google Map */}
+      {/* Lazy-loaded interactive Google Map */}
       <LazyGoogleMap location={location} />
 
       <div className="flex flex-1 flex-col px-6 py-7 sm:px-8">
@@ -219,30 +269,24 @@ function LocationCard({ location }) {
           </p>
         </div>
 
-        {/* Google Maps app icon */}
+        {/* Open in the visitor's Maps application */}
         <a
           href={mapsUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-6 flex items-center gap-4 rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 transition hover:border-red-800/30 hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-800"
         >
-          <img
-            src={GOOGLE_MAPS_ICON}
-            width={48}
-            height={48}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            className="h-12 w-12 shrink-0 object-contain"
-          />
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-800">
+            <PinIcon className="h-7 w-7" />
+          </span>
 
           <div className="min-w-0 flex-1">
             <p className="font-semibold text-stone-900">
-              Open in Google Maps
+              Open in Maps
             </p>
 
             <p className="mt-0.5 text-xs text-stone-500">
-              View this nursery&apos;s location
+              View this nursery in your Maps app
             </p>
           </div>
 
@@ -305,6 +349,7 @@ function LocationCard({ location }) {
                   <span className="block text-xs font-semibold uppercase tracking-wide text-stone-500">
                     Office
                   </span>
+
                   <span className="block text-sm font-bold text-stone-900">
                     {location.officePhone}
                   </span>
@@ -326,6 +371,7 @@ function LocationCard({ location }) {
                   <span className="block text-xs font-semibold uppercase tracking-wide text-stone-500">
                     Cell
                   </span>
+
                   <span className="block text-sm font-bold text-stone-900">
                     {location.cellPhone}
                   </span>
@@ -335,13 +381,14 @@ function LocationCard({ location }) {
           </div>
         </div>
 
+        {/* Visiting information */}
         {location.visitNote && (
           <p className="mt-6 rounded-xl bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-900">
             {location.visitNote}
           </p>
         )}
 
-        {/* Directions */}
+        {/* Native Maps directions */}
         <div className="mt-auto pt-8">
           {location.directionsEnabled ? (
             <a
@@ -393,7 +440,7 @@ export default function LocationsPreview() {
           </p>
         </div>
 
-        {/* Two Google Maps */}
+        {/* Two Google Maps previews */}
         <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8">
           {nurseryLocations.map((location) => (
             <LocationCard

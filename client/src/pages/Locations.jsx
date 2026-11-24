@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 import {
   nurseryLocations,
+  getLocationAddress,
   getGoogleMapsEmbedUrl,
   getGoogleMapsUrl,
   getGoogleMapsDirectionsUrl,
@@ -13,8 +14,48 @@ import {
 const LOCATIONS_HERO_IMAGE =
   "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=2000&q=85";
 
-const GOOGLE_MAPS_ICON =
-  "https://www.gstatic.com/images/branding/product/2x/maps_96dp.png";
+// =============================================
+// NATIVE MAPS SUPPORT
+//
+// iOS     = Apple Maps
+// Android = Installed maps app
+// Desktop = Google Maps browser fallback
+// =============================================
+
+function getPreferredMapsUrl(location, directions = false) {
+  const address = encodeURIComponent(
+    getLocationAddress(location)
+  );
+
+  if (typeof navigator === "undefined") {
+    return directions
+      ? getGoogleMapsDirectionsUrl(location)
+      : getGoogleMapsUrl(location);
+  }
+
+  const userAgent = navigator.userAgent;
+
+  const isIOS =
+    /iPhone|iPad|iPod/i.test(userAgent) ||
+    (navigator.platform === "MacIntel" &&
+      navigator.maxTouchPoints > 1);
+
+  const isAndroid = /Android/i.test(userAgent);
+
+  if (isIOS) {
+    return directions
+      ? `https://maps.apple.com/?daddr=${address}&dirflg=d`
+      : `https://maps.apple.com/?q=${address}`;
+  }
+
+  if (isAndroid) {
+    return `geo:0,0?q=${address}`;
+  }
+
+  return directions
+    ? getGoogleMapsDirectionsUrl(location)
+    : getGoogleMapsUrl(location);
+}
 
 function PinIcon({ className = "h-5 w-5" }) {
   return (
@@ -30,6 +71,7 @@ function PinIcon({ className = "h-5 w-5" }) {
         strokeWidth="1.8"
         strokeLinejoin="round"
       />
+
       <circle
         cx="12"
         cy="10"
@@ -56,6 +98,7 @@ function ClockIcon() {
         stroke="currentColor"
         strokeWidth="1.8"
       />
+
       <path
         d="M12 7v5l3.5 2"
         stroke="currentColor"
@@ -172,6 +215,7 @@ function LazyLocationMap({ location }) {
       ) : (
         <div className="flex h-full flex-col items-center justify-center gap-3">
           <PinIcon className="h-10 w-10 text-red-800" />
+
           <span className="text-sm font-medium text-stone-500">
             Map loads as you scroll
           </span>
@@ -182,9 +226,11 @@ function LazyLocationMap({ location }) {
 }
 
 function LocationSection({ location, index }) {
-  const mapsUrl = getGoogleMapsUrl(location);
-  const directionsUrl =
-    getGoogleMapsDirectionsUrl(location);
+  const mapsUrl = getPreferredMapsUrl(location);
+  const directionsUrl = getPreferredMapsUrl(
+    location,
+    true
+  );
 
   return (
     <article
@@ -196,28 +242,22 @@ function LocationSection({ location, index }) {
         <div className="p-4 sm:p-6">
           <LazyLocationMap location={location} />
 
+          {/* Open in the visitor's Maps app */}
           <a
             href={mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
             className="mt-4 flex items-center gap-4 rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 transition hover:border-red-800/30 hover:bg-red-50"
           >
-            <img
-              src={GOOGLE_MAPS_ICON}
-              width={48}
-              height={48}
-              loading="lazy"
-              decoding="async"
-              alt=""
-              className="h-12 w-12 shrink-0 object-contain"
-            />
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-800">
+              <PinIcon className="h-7 w-7" />
+            </span>
 
             <div className="min-w-0 flex-1">
               <p className="font-semibold text-stone-900">
-                Open in Google Maps
+                Open in Maps
               </p>
+
               <p className="mt-1 text-xs text-stone-500">
-                Explore the neighborhood and location
+                View this nursery in your Maps app
               </p>
             </div>
 
@@ -279,6 +319,7 @@ function LocationSection({ location, index }) {
                       className="flex flex-wrap justify-between gap-x-6 gap-y-1 text-sm text-stone-600"
                     >
                       <span>{entry.days}</span>
+
                       <span className="font-medium text-stone-800">
                         {entry.time}
                       </span>
@@ -315,6 +356,7 @@ function LocationSection({ location, index }) {
                     <span className="block text-xs font-semibold uppercase tracking-wide text-stone-500">
                       Office
                     </span>
+
                     <span className="block text-sm font-bold text-stone-900">
                       {location.officePhone}
                     </span>
@@ -336,6 +378,7 @@ function LocationSection({ location, index }) {
                     <span className="block text-xs font-semibold uppercase tracking-wide text-stone-500">
                       Cell
                     </span>
+
                     <span className="block text-sm font-bold text-stone-900">
                       {location.cellPhone}
                     </span>
@@ -352,13 +395,11 @@ function LocationSection({ location, index }) {
             </p>
           )}
 
-          {/* Driving directions */}
+          {/* Native Maps directions */}
           <div className="mt-auto pt-9">
             {location.directionsEnabled ? (
               <a
                 href={directionsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-full bg-red-800 px-6 py-3.5 font-semibold text-white shadow-sm transition hover:bg-red-900 hover:shadow-lg"
               >
                 <NavigationIcon />
@@ -418,7 +459,7 @@ export default function Locations() {
 
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/95 drop-shadow-sm">
             Find Garibaldo&apos;s Nursery, explore our
-            locations on Google Maps, and get driving
+            locations on the map, and get driving
             directions for your next visit.
           </p>
 
