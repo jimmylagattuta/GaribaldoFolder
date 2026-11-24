@@ -99,15 +99,15 @@ export default function ContactUs() {
       website: form.website,
     };
 
+    // Require only a name, email, and nonempty message.
     if (
       !payload.name ||
       !payload.email ||
-      payload.message.length < 10
+      !payload.message
     ) {
       setStatus({
         type: "error",
-        message:
-          "Please enter your name, email, and a message of at least 10 characters.",
+        message: "Please complete all required fields.",
       });
 
       return;
@@ -323,7 +323,6 @@ export default function ContactUs() {
                 id="contact-message"
                 name="message"
                 required
-                minLength={10}
                 maxLength={5000}
                 rows={6}
                 value={form.message}
