@@ -1,11 +1,22 @@
-
 import VideoHero from "../components/VideoHero";
 import LocationsPreview from "../components/LocationsPreview";
 import ContactUs from "../components/ContactUs";
 
+import HomeSchema from "../components/seo/HomeSchema";
+import SEO from "../components/seo/SEO";
+
 function Home() {
   return (
     <>
+      <SEO
+        title="Garibaldo's Nursery | Plants & Garden Supplies"
+        description="Explore quality plants and gardening essentials at Garibaldo's Nursery in Bellflower and Lakewood, California. Find locations, hours, and directions."
+        path="/"
+      />
+
+      {/* Homepage structured data */}
+      <HomeSchema />
+
       {/* Homepage video hero */}
       <section className="relative isolate min-h-[75svh] overflow-hidden bg-stone-900 md:min-h-[85svh]">
         {/* Responsive video background */}
@@ -37,7 +48,7 @@ function Home() {
       {/* Locations, maps, hours, and directions */}
       <LocationsPreview />
 
-      {/* Contact information and email form */}
+      {/* Customer contact form */}
       <ContactUs />
     </>
   );

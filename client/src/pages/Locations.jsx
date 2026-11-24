@@ -2,6 +2,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
+import SEO from "../components/seo/SEO";
+import LocalBusinessSchema from "../components/seo/LocalBusinessSchema";
+
 import {
   nurseryLocations,
   getLocationAddress,
@@ -136,7 +139,7 @@ function PhoneIcon() {
       aria-hidden="true"
     >
       <path
-        d="M6.5 3.5 10 7l-2 3a15 15 0 0 0 6 6l3-2 3.5 3.5-2 3c-.5.8-1.5 1.2-2.4 1C9.1 20 4 14.9 2.5 7.9c-.2-.9.2-1.9 1-2.4l3-2Z"
+        d="M6.5 3.5 10 7l-2 3a15 15 0 0 0 6 6l3-2 3.5 3.5-2 3c-.5.8-1.5 1.2-2.4 1C9.1 20 4 14.9 2.5 7.9c-.2-.9 0-1.9 1-2.4l3-2Z"
         stroke="currentColor"
         strokeWidth="1.8"
         strokeLinejoin="round"
@@ -418,101 +421,101 @@ function LocationSection({ location, index }) {
 }
 
 export default function Locations() {
-  useEffect(() => {
-    const previousTitle = document.title;
-
-    document.title =
-      "Nursery Locations & Directions | Garibaldo's Nursery";
-
-    return () => {
-      document.title = previousTitle;
-    };
-  }, []);
-
   return (
-    <div className="min-h-screen bg-[#f7f2e8]">
-      {/* Photo hero */}
-      <section className="relative isolate flex min-h-[420px] items-center justify-center overflow-hidden bg-stone-900 px-6 py-20 text-center sm:min-h-[480px] md:min-h-[560px]">
-        {/* Background photograph */}
-        <img
-          src={LOCATIONS_HERO_IMAGE}
-          alt=""
-          aria-hidden="true"
-          fetchPriority="high"
-          loading="eager"
-          decoding="async"
-          className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
-        />
+    <>
+      <SEO
+        title="Nursery Locations in Bellflower & Lakewood | Garibaldo's Nursery"
+        description="Visit Garibaldo's Nursery in Bellflower or Lakewood, California. Find our nursery addresses, business hours, phone numbers, maps, and driving directions."
+        path="/locations"
+      />
 
-        {/* Dark overlay for legibility */}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/65 via-black/50 to-black/70" />
+      {/* Structured data for both nursery locations */}
+      <LocalBusinessSchema />
 
-        {/* Hero content */}
-        <div className="relative z-10 mx-auto max-w-3xl">
-          <p className="text-sm font-bold uppercase tracking-[0.25em] text-white/90">
-            Come Visit Us
-          </p>
+      <div className="min-h-screen bg-[#f7f2e8]">
+        {/* Photo hero */}
+        <section className="relative isolate flex min-h-[420px] items-center justify-center overflow-hidden bg-stone-900 px-6 py-20 text-center sm:min-h-[480px] md:min-h-[560px]">
+          {/* Background photograph */}
+          <img
+            src={LOCATIONS_HERO_IMAGE}
+            alt=""
+            aria-hidden="true"
+            fetchPriority="high"
+            loading="eager"
+            decoding="async"
+            className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
+          />
 
-          <h1 className="mt-5 text-4xl font-bold tracking-tight text-white drop-shadow-md sm:text-5xl md:text-6xl">
-            Our Locations
-          </h1>
+          {/* Dark overlay for legibility */}
+          <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/65 via-black/50 to-black/70" />
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/95 drop-shadow-sm">
-            Find Garibaldo&apos;s Nursery, explore our
-            locations on the map, and get driving
-            directions for your next visit.
-          </p>
+          {/* Hero content */}
+          <div className="relative z-10 mx-auto max-w-3xl">
+            <p className="text-sm font-bold uppercase tracking-[0.25em] text-white/90">
+              Come Visit Us
+            </p>
 
-          {/* Quick location navigation */}
-          <div className="mt-9 flex flex-wrap justify-center gap-3">
-            {nurseryLocations.map((location) => (
-              <a
+            <h1 className="mt-5 text-4xl font-bold tracking-tight text-white drop-shadow-md sm:text-5xl md:text-6xl">
+              Our Locations
+            </h1>
+
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/95 drop-shadow-sm">
+              Find Garibaldo&apos;s Nursery, explore our
+              locations on the map, and get driving
+              directions for your next visit.
+            </p>
+
+            {/* Quick location navigation */}
+            <div className="mt-9 flex flex-wrap justify-center gap-3">
+              {nurseryLocations.map((location) => (
+                <a
+                  key={location.id}
+                  href={`#${location.id}`}
+                  className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/60 bg-white/15 px-6 py-3 font-semibold text-white backdrop-blur-sm transition hover:border-white hover:bg-white hover:text-red-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                >
+                  <PinIcon />
+                  {location.city}
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Individual nursery locations */}
+        <section className="px-6 py-14 sm:px-10 md:py-20">
+          <div className="mx-auto flex max-w-[1250px] flex-col gap-10">
+            {nurseryLocations.map((location, index) => (
+              <LocationSection
                 key={location.id}
-                href={`#${location.id}`}
-                className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/60 bg-white/15 px-6 py-3 font-semibold text-white backdrop-blur-sm transition hover:border-white hover:bg-white hover:text-red-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-              >
-                <PinIcon />
-                {location.city}
-              </a>
+                location={location}
+                index={index}
+              />
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Individual nursery locations */}
-      <section className="px-6 py-14 sm:px-10 md:py-20">
-        <div className="mx-auto flex max-w-[1250px] flex-col gap-10">
-          {nurseryLocations.map((location, index) => (
-            <LocationSection
-              key={location.id}
-              location={location}
-              index={index}
-            />
-          ))}
-        </div>
-      </section>
+        {/* Final call to action */}
+        <section className="bg-[#fffdf8] px-6 py-16 text-center sm:px-10 md:py-20">
+          <div className="mx-auto max-w-2xl">
+            <h2 className="text-3xl font-bold text-stone-900 sm:text-4xl">
+              Ready to Find Your Next Favorite Plant?
+            </h2>
 
-      {/* Final call to action */}
-      <section className="bg-[#fffdf8] px-6 py-16 text-center sm:px-10 md:py-20">
-        <div className="mx-auto max-w-2xl">
-          <h2 className="text-3xl font-bold text-stone-900 sm:text-4xl">
-            Ready to Find Your Next Favorite Plant?
-          </h2>
+            <p className="mt-4 leading-relaxed text-stone-600">
+              Browse our nursery offerings and discover
+              something beautiful for your home or garden.
+            </p>
 
-          <p className="mt-4 leading-relaxed text-stone-600">
-            Browse our nursery offerings and discover
-            something beautiful for your home or garden.
-          </p>
-
-          <Link
-            to="/shop"
-            className="mt-8 inline-flex min-h-12 items-center justify-center gap-3 rounded-full bg-red-800 px-8 py-3.5 font-semibold text-white transition hover:bg-red-900"
-          >
-            Explore Our Plants
-            <ArrowIcon />
-          </Link>
-        </div>
-      </section>
-    </div>
+            <Link
+              to="/shop"
+              className="mt-8 inline-flex min-h-12 items-center justify-center gap-3 rounded-full bg-red-800 px-8 py-3.5 font-semibold text-white transition hover:bg-red-900"
+            >
+              Explore Our Plants
+              <ArrowIcon />
+            </Link>
+          </div>
+        </section>
+      </div>
+    </>
   );
 }

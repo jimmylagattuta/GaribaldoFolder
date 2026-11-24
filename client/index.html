@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
   <head>
@@ -10,6 +9,12 @@
       content="width=device-width, initial-scale=1.0"
     />
 
+    <!-- Browser theme -->
+    <meta
+      name="theme-color"
+      content="#f7f2e8"
+    />
+
     <!-- Optimized 32x32 favicon -->
     <link
       rel="icon"
@@ -18,13 +23,49 @@
       href="/favicon-32.png"
     />
 
-    <!-- SEO -->
+    <!-- ========================================
+         DEFAULT SEO METADATA
+
+         These are fallbacks for the React app.
+         Each public route should override its
+         own title, description, and canonical.
+         ======================================== -->
+
+    <title>
+      Garibaldo's Nursery | Plants & Garden Supplies
+    </title>
+
     <meta
       name="description"
-      content="Garibaldo's Nursery — Bellflower & Lakewood."
+      content="Explore quality plants, nursery products, and gardening essentials at Garibaldo's Nursery in Bellflower and Lakewood, California. Visit our nurseries today."
     />
 
-    <title>Garibaldo's Nursery</title>
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large"
+    />
+
+    <!-- ========================================
+         SOCIAL SHARING DEFAULTS
+
+         Page-specific Open Graph metadata
+         should be managed by the React router.
+         ======================================== -->
+
+    <meta
+      property="og:type"
+      content="website"
+    />
+
+    <meta
+      property="og:site_name"
+      content="Garibaldo's Nursery"
+    />
+
+    <meta
+      property="og:locale"
+      content="en_US"
+    />
 
     <!--
       Establish an early connection to Cloudinary.
@@ -93,4 +134,3 @@
     ></script>
   </body>
 </html>
-9
