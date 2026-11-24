@@ -16,7 +16,7 @@ Rails.application.routes.draw do
     get "/me", to: "auth#me"
 
     # Contact form
-    post "/contact", to: "/contacts#create"
+    post "/contact", to: "contacts#create"
 
     # Cloudinary signed uploads
     post "/uploads/signature", to: "uploads#signature"
