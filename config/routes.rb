@@ -1,3 +1,4 @@
+
 Rails.application.routes.draw do
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
@@ -13,6 +14,9 @@ Rails.application.routes.draw do
     post "/login", to: "auth#login"
     delete "/logout", to: "auth#logout"
     get "/me", to: "auth#me"
+
+    # Contact form
+    post "/contact", to: "/contacts#create"
 
     # Cloudinary signed uploads
     post "/uploads/signature", to: "uploads#signature"
