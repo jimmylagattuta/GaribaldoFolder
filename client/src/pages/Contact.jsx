@@ -1,15 +1,23 @@
-function Contact() {
-  return (
-    <section className="mx-auto max-w-[1400px] px-6 py-16">
-      <h1 className="text-4xl font-bold text-stone-900">
-        Contact
-      </h1>
 
-      <p className="mt-4 text-stone-600">
-        Contact Garibaldo&apos;s Nursery for questions and assistance.
-      </p>
-    </section>
+import { useEffect } from "react";
+
+import ContactUs from "../components/ContactUs";
+
+export default function Contact() {
+  useEffect(() => {
+    const previousTitle = document.title;
+
+    document.title =
+      "Contact Us | Garibaldo's Nursery";
+
+    return () => {
+      document.title = previousTitle;
+    };
+  }, []);
+
+  return (
+    <main className="min-h-screen bg-[#fffdf8]">
+      <ContactUs />
+    </main>
   );
 }
-
-export default Contact;
