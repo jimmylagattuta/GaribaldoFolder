@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -45,13 +44,13 @@ function getPreferredMapsUrl(location, directions = false) {
       : `https://maps.apple.com/?q=${address}`;
   }
 
-  // Android geo: links let the device resolve
-  // which installed Maps application to open.
+  // Android lets compatible installed mapping
+  // applications handle geo: URLs.
   if (isAndroid) {
     return `geo:0,0?q=${address}`;
   }
 
-  // Desktop fallback.
+  // Desktop browser fallback.
   return directions
     ? getGoogleMapsDirectionsUrl(location)
     : getGoogleMapsUrl(location);
@@ -165,7 +164,7 @@ function ArrowIcon() {
 }
 
 // Google Maps stays embedded for the preview.
-// It is only mounted after the map becomes visible.
+// The iframe mounts only when the map becomes visible.
 function LazyGoogleMap({ location }) {
   const containerRef = useRef(null);
   const [shouldLoad, setShouldLoad] = useState(false);
@@ -230,6 +229,7 @@ function LazyGoogleMap({ location }) {
 
 function LocationCard({ location }) {
   const mapsUrl = getPreferredMapsUrl(location);
+
   const directionsUrl = getPreferredMapsUrl(
     location,
     true
@@ -286,7 +286,7 @@ function LocationCard({ location }) {
             </p>
 
             <p className="mt-0.5 text-xs text-stone-500">
-              View this nursery in your Maps app
+              View our nursery in your Maps app
             </p>
           </div>
 
@@ -436,12 +436,13 @@ export default function LocationsPreview() {
           <p className="mt-5 text-base leading-relaxed text-stone-600 md:text-lg">
             Discover beautiful plants, gardening supplies,
             and everything you need for your next project.
-            Find our locations and plan your visit.
+            Visit our nursery on Rose Street in Bellflower
+            and plan your trip.
           </p>
         </div>
 
-        {/* Two Google Maps previews */}
-        <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8">
+        {/* Single centered Bellflower nursery card */}
+        <div className="mx-auto mt-12 max-w-[760px]">
           {nurseryLocations.map((location) => (
             <LocationCard
               key={location.id}
@@ -450,13 +451,13 @@ export default function LocationsPreview() {
           ))}
         </div>
 
-        {/* Dedicated locations page */}
+        {/* Dedicated nursery location page */}
         <div className="mt-12 text-center">
           <Link
             to="/locations"
             className="inline-flex min-h-12 items-center justify-center gap-3 rounded-full border-2 border-red-800 px-8 py-3 font-semibold text-red-800 transition hover:bg-red-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-red-800"
           >
-            View All Locations
+            View Our Location
             <ArrowIcon />
           </Link>
         </div>

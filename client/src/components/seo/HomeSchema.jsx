@@ -1,4 +1,3 @@
-
 import { nurseryLocations } from "../../data/locations";
 
 const SITE_URL = "https://www.garibaldosnursery.com";
@@ -13,7 +12,7 @@ export default function HomeSchema() {
         name: "Garibaldo's Nursery",
         url: SITE_URL,
         description:
-          "Garibaldo's Nursery provides quality plants, nursery products, and gardening essentials in Bellflower and Lakewood, California.",
+          "Garibaldo's Nursery provides quality plants, nursery products, and gardening essentials in Bellflower, California.",
         email: "garibaldosnursery@gmail.com",
         telephone: "+15626306240",
         location: nurseryLocations.map((location) => ({
@@ -37,7 +36,7 @@ export default function HomeSchema() {
         name:
           "Garibaldo's Nursery | Plants & Garden Supplies",
         description:
-          "Explore quality plants and gardening essentials at Garibaldo's Nursery in Bellflower and Lakewood, California.",
+          "Explore quality plants and gardening essentials at Garibaldo's Nursery on Rose Street in Bellflower, California.",
         isPartOf: {
           "@id": `${SITE_URL}/#website`,
         },

@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -167,7 +166,7 @@ function ArrowIcon() {
   );
 }
 
-// Mount each Google Map only when the visitor scrolls near it.
+// Mount the Google Map only when visitors scroll near it.
 function LazyLocationMap({ location }) {
   const containerRef = useRef(null);
   const [shouldLoad, setShouldLoad] = useState(false);
@@ -228,7 +227,7 @@ function LazyLocationMap({ location }) {
   );
 }
 
-function LocationSection({ location, index }) {
+function LocationSection({ location }) {
   const mapsUrl = getPreferredMapsUrl(location);
   const directionsUrl = getPreferredMapsUrl(
     location,
@@ -248,7 +247,7 @@ function LocationSection({ location, index }) {
           {/* Open in the visitor's Maps app */}
           <a
             href={mapsUrl}
-            className="mt-4 flex items-center gap-4 rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 transition hover:border-red-800/30 hover:bg-red-50"
+            className="mt-4 flex items-center gap-4 rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 transition hover:border-red-800/30 hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-800"
           >
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-800">
               <PinIcon className="h-7 w-7" />
@@ -260,7 +259,7 @@ function LocationSection({ location, index }) {
               </p>
 
               <p className="mt-1 text-xs text-stone-500">
-                View this nursery in your Maps app
+                View our nursery in your Maps app
               </p>
             </div>
 
@@ -271,7 +270,7 @@ function LocationSection({ location, index }) {
         {/* Store information */}
         <div className="flex flex-col p-6 sm:p-8 lg:py-10 lg:pr-10">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-800">
-            Location {String(index + 1).padStart(2, "0")}
+            Visit Our Nursery
           </p>
 
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
@@ -403,7 +402,7 @@ function LocationSection({ location, index }) {
             {location.directionsEnabled ? (
               <a
                 href={directionsUrl}
-                className="inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-full bg-red-800 px-6 py-3.5 font-semibold text-white shadow-sm transition hover:bg-red-900 hover:shadow-lg"
+                className="inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-full bg-red-800 px-6 py-3.5 font-semibold text-white shadow-sm transition hover:bg-red-900 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-800"
               >
                 <NavigationIcon />
                 Get Driving Directions
@@ -424,12 +423,12 @@ export default function Locations() {
   return (
     <>
       <SEO
-        title="Nursery Locations in Bellflower & Lakewood | Garibaldo's Nursery"
-        description="Visit Garibaldo's Nursery in Bellflower or Lakewood, California. Find our nursery addresses, business hours, phone numbers, maps, and driving directions."
+        title="Visit Our Nursery in Bellflower | Garibaldo's Nursery"
+        description="Visit Garibaldo's Nursery at 8834 Rose Street in Bellflower, California. Find our business hours, phone numbers, map, and driving directions."
         path="/locations"
       />
 
-      {/* Structured data for both nursery locations */}
+      {/* Structured data for our Bellflower nursery */}
       <LocalBusinessSchema />
 
       <div className="min-h-screen bg-[#f7f2e8]">
@@ -456,16 +455,17 @@ export default function Locations() {
             </p>
 
             <h1 className="mt-5 text-4xl font-bold tracking-tight text-white drop-shadow-md sm:text-5xl md:text-6xl">
-              Our Locations
+              Visit Our Nursery
             </h1>
 
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/95 drop-shadow-sm">
-              Find Garibaldo&apos;s Nursery, explore our
-              locations on the map, and get driving
-              directions for your next visit.
+              Visit Garibaldo&apos;s Nursery on Rose
+              Street in Bellflower. Explore our location,
+              check our hours, and get directions for
+              your next visit.
             </p>
 
-            {/* Quick location navigation */}
+            {/* Quick navigation to nursery details */}
             <div className="mt-9 flex flex-wrap justify-center gap-3">
               {nurseryLocations.map((location) => (
                 <a
@@ -474,21 +474,20 @@ export default function Locations() {
                   className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/60 bg-white/15 px-6 py-3 font-semibold text-white backdrop-blur-sm transition hover:border-white hover:bg-white hover:text-red-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                 >
                   <PinIcon />
-                  {location.city}
+                  View Location & Hours
                 </a>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Individual nursery locations */}
+        {/* Bellflower nursery location */}
         <section className="px-6 py-14 sm:px-10 md:py-20">
-          <div className="mx-auto flex max-w-[1250px] flex-col gap-10">
-            {nurseryLocations.map((location, index) => (
+          <div className="mx-auto max-w-[1100px]">
+            {nurseryLocations.map((location) => (
               <LocationSection
                 key={location.id}
                 location={location}
-                index={index}
               />
             ))}
           </div>

@@ -1,4 +1,3 @@
-
 import { nurseryLocations } from "../../data/locations";
 
 const SITE_URL = "https://www.garibaldosnursery.com";
@@ -13,7 +12,8 @@ const DAYS = [
   "Sunday",
 ];
 
-// Convert "Tuesday – Sunday" into individual day names.
+// Convert ranges such as "Tuesday – Friday"
+// into individual Schema.org day names.
 function parseDays(value) {
   const normalized = value
     .replace(/[–—]/g, "-")
@@ -50,7 +50,7 @@ function parseDays(value) {
   return result;
 }
 
-// Convert 8:00 AM into 08:00.
+// Convert time such as 7:30 AM to 07:30.
 function to24Hour(hour, minute, period) {
   let hours = Number(hour);
 
@@ -65,9 +65,11 @@ function to24Hour(hour, minute, period) {
   return `${String(hours).padStart(2, "0")}:${minute}`;
 }
 
-// Convert displayed hours to Schema.org hours.
+// Convert visible business hours into Schema.org
+// OpeningHoursSpecification entries.
 function getOpeningHours(location) {
   return (location.hours || []).flatMap((entry) => {
+    // Closed days should not have opening hours.
     if (/closed/i.test(entry.time)) {
       return [];
     }
@@ -82,16 +84,26 @@ function getOpeningHours(location) {
 
     if (!days.length) return [];
 
-    return [{
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: days,
-      opens: to24Hour(match[1], match[2], match[3]),
-      closes: to24Hour(match[4], match[5], match[6]),
-    }];
+    return [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: days,
+        opens: to24Hour(
+          match[1],
+          match[2],
+          match[3]
+        ),
+        closes: to24Hour(
+          match[4],
+          match[5],
+          match[6]
+        ),
+      },
+    ];
   });
 }
 
-// Extract city, state and ZIP from existing cityState.
+// Extract city, state, and ZIP from cityState.
 function getPostalAddress(location) {
   const match = location.cityState.match(
     /^(.+?),\s*([A-Z]{2})\s+(\d{5})(?:-\d{4})?$/
@@ -107,6 +119,9 @@ function getPostalAddress(location) {
   };
 }
 
+// Build structured data from the actual
+// nursery location, contact information,
+// and business hours.
 function buildLocationSchema(location) {
   const locationUrl =
     `${SITE_URL}/locations#${location.id}`;
@@ -114,16 +129,25 @@ function buildLocationSchema(location) {
   return {
     "@type": "Store",
     "@id": locationUrl,
-    name: `${location.name} - ${location.city}`,
+
+    name: location.name,
     url: locationUrl,
+
     description:
-      `Garibaldo's Nursery in ${location.city}, California. ` +
-      "Plants, nursery products, and gardening essentials.",
+      `Garibaldo's Nursery at ${location.address} ` +
+      `in ${location.city}, California. ` +
+      "Quality plants, nursery products, " +
+      "and gardening essentials.",
+
     telephone: location.phoneHref
       ? location.phoneHref.replace(/^tel:/, "")
       : location.phone,
+
     address: getPostalAddress(location),
-    openingHoursSpecification: getOpeningHours(location),
+
+    openingHoursSpecification:
+      getOpeningHours(location),
+
     hasMap:
       "https://www.google.com/maps/search/?api=1&query=" +
       encodeURIComponent(
@@ -139,11 +163,13 @@ function buildLocationSchema(location) {
 export default function LocalBusinessSchema() {
   const schema = {
     "@context": "https://schema.org",
-    "@graph": nurseryLocations.map(buildLocationSchema),
+    "@graph": nurseryLocations.map(
+      buildLocationSchema
+    ),
   };
 
-  // Escape "<" to prevent JSON-LD content from
-  // being interpreted as HTML.
+  // Escape "<" so JSON-LD cannot accidentally
+  // be interpreted as HTML markup.
   const json = JSON.stringify(schema).replace(
     /</g,
     "\\u003c"

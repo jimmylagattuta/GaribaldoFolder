@@ -9,8 +9,8 @@ function Home() {
   return (
     <>
       <SEO
-        title="Garibaldo's Nursery | Plants & Garden Supplies"
-        description="Explore quality plants and gardening essentials at Garibaldo's Nursery in Bellflower and Lakewood, California. Find locations, hours, and directions."
+        title="Garibaldo's Nursery | Plants & Garden Supplies in Bellflower"
+        description="Explore quality plants and gardening essentials at Garibaldo's Nursery on Rose Street in Bellflower, California. Find our hours, address, and directions."
         path="/"
       />
 
@@ -45,7 +45,7 @@ function Home() {
         </div>
       </section>
 
-      {/* Locations, maps, hours, and directions */}
+      {/* Nursery map, hours, and directions */}
       <LocationsPreview />
 
       {/* Customer contact form */}

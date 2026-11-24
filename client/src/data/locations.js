@@ -18,46 +18,23 @@ export const nurseryLocations = [
     cellPhone: "(562) 382-7956",
     cellPhoneHref: "tel:+15623827956",
 
-    // Bellflower: Closed Monday
+    // Confirmed business hours
     hours: [
       {
         days: "Monday",
         time: "Closed",
       },
       {
-        days: "Tuesday – Sunday",
-        time: "8:00 AM – 5:00 PM",
+        days: "Tuesday – Friday",
+        time: "7:30 AM – 4:00 PM",
       },
-    ],
-
-    hoursNote: null,
-    visitNote: null,
-    directionsEnabled: true,
-  },
-
-  {
-    id: "lakewood",
-    name: "Garibaldo's Nursery",
-    city: "Lakewood",
-    address: "6221 Clark Ave",
-    cityState: "Lakewood, CA 90712",
-    country: "USA",
-
-    // Contact information
-    phone: "(562) 630-6240",
-    phoneHref: "tel:+15626306240",
-
-    officePhone: "(562) 630-6240",
-    officePhoneHref: "tel:+15626306240",
-
-    cellPhone: "(562) 382-7956",
-    cellPhoneHref: "tel:+15623827956",
-
-    // Lakewood: Open seven days a week
-    hours: [
       {
-        days: "Monday – Sunday",
-        time: "8:00 AM – 5:00 PM",
+        days: "Saturday",
+        time: "7:30 AM – 2:00 PM",
+      },
+      {
+        days: "Sunday",
+        time: "12:00 PM – 4:00 PM",
       },
     ],
 
