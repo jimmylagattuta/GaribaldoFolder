@@ -1,0 +1,1 @@
+import{t as e}from"./index-Co4vkFNw.js";var t=e();function n(){return(0,t.jsxs)(`section`,{className:`mx-auto max-w-[1400px] px-6 py-16`,children:[(0,t.jsx)(`h1`,{className:`text-4xl font-bold text-stone-900`,children:`Contact`}),(0,t.jsx)(`p`,{className:`mt-4 text-stone-600`,children:`Contact Garibaldo's Nursery for questions and assistance.`})]})}export{n as default};

@@ -1,0 +1,1 @@
+import{t as e}from"./index-B8m5-aoX.js";var t=e();function n(){return(0,t.jsxs)(`section`,{className:`mx-auto max-w-[1400px] px-6 py-16`,children:[(0,t.jsx)(`h1`,{className:`text-4xl font-bold text-stone-900`,children:`Plants`}),(0,t.jsx)(`p`,{className:`mt-4 text-stone-600`,children:`Explore plants by category, type, and availability.`})]})}export{n as default};

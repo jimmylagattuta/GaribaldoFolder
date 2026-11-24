@@ -1,10 +1,16 @@
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { apiRequest } from "../lib/api";
 
-import topLeaves from "../assets/leaves-top.png";
-import bottomLeaves from "../assets/leaves-bottom.png";
+// Cloudinary-optimized top leaves
+const topLeavesUrl = (width) =>
+  `https://res.cloudinary.com/djtsuktwb/image/upload/c_limit,w_${width},f_auto,q_auto/v1795479542/leaves-top_c71nip.png`;
+
+// Cloudinary-optimized bottom leaves
+const bottomLeavesUrl = (width) =>
+  `https://res.cloudinary.com/djtsuktwb/image/upload/c_limit,w_${width},f_auto,q_auto/v1795476902/leaves-bottom_olnclv.png`;
 
 function SignIn() {
   const navigate = useNavigate();
@@ -75,8 +81,7 @@ function SignIn() {
         }
 
         if (response.status === 401) {
-          const errorCode =
-            data.code || data.error_code;
+          const errorCode = data.code || data.error_code;
 
           if (errorCode === "USER_NOT_FOUND") {
             setFieldErrors({
@@ -177,9 +182,7 @@ function SignIn() {
           );
         }
 
-        sessionStorage.removeItem(
-          "authToken"
-        );
+        sessionStorage.removeItem("authToken");
         sessionStorage.removeItem("user");
       } else {
         sessionStorage.setItem(
@@ -294,10 +297,15 @@ function SignIn() {
   return (
     <section className="mx-auto w-full max-w-xl px-4 py-8 md:px-6 md:py-14">
       <div className="relative overflow-hidden rounded-3xl bg-[#fffdf8] shadow-lg">
+        {/* Optimized Cloudinary top artwork */}
         <img
-          src={topLeaves}
+          src={topLeavesUrl(400)}
+          srcSet={`${topLeavesUrl(400)} 400w, ${topLeavesUrl(800)} 800w`}
+          sizes="(max-width: 640px) 88vw, 490px"
           alt=""
           aria-hidden="true"
+          loading="eager"
+          decoding="async"
           className="pointer-events-none mx-auto max-h-[180px] w-[88%] select-none object-contain object-top"
         />
 
@@ -312,8 +320,7 @@ function SignIn() {
             </h1>
 
             <p className="mt-3 text-stone-600">
-              Welcome back. Sign in to your
-              account.
+              Welcome back. Sign in to your account.
             </p>
           </div>
 
@@ -392,9 +399,7 @@ function SignIn() {
                   autoComplete="current-password"
                   placeholder="Enter your password"
                   value={password}
-                  onChange={
-                    handlePasswordChange
-                  }
+                  onChange={handlePasswordChange}
                   aria-invalid={Boolean(
                     fieldErrors.password
                   )}
@@ -493,11 +498,18 @@ function SignIn() {
           </p>
         </div>
 
+        {/* Optimized Cloudinary bottom artwork */}
         <img
-          src={bottomLeaves}
+          src={bottomLeavesUrl(500)}
+          srcSet={`${bottomLeavesUrl(500)} 500w, ${bottomLeavesUrl(1000)} 1000w`}
+          sizes="(max-width: 640px) 92vw, 530px"
+          width={1672}
+          height={941}
           alt=""
           aria-hidden="true"
-          className="pointer-events-none mx-auto mt-1 w-[92%] select-none object-contain"
+          loading="lazy"
+          decoding="async"
+          className="pointer-events-none mx-auto mt-1 h-auto w-[92%] select-none object-contain"
         />
 
         <div className="pb-6 text-center">
@@ -559,7 +571,6 @@ function EyeOffIcon() {
         stroke="currentColor"
         strokeWidth="1.8"
         strokeLinecap="round"
-        strokeLinejoin="round"
       />
 
       <path

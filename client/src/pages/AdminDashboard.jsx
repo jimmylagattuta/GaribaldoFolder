@@ -1,7 +1,25 @@
+
 import { Link } from "react-router-dom";
 
-import topLeaves from "../assets/leaves-top.png";
-import bottomLeaves from "../assets/leaves-bottom.png";
+// Cloudinary-optimized top leaves
+const TOP_LEAVES_BASE =
+  "https://res.cloudinary.com/djtsuktwb/image/upload";
+
+const TOP_LEAVES_ASSET =
+  "v1795479542/leaves-top_c71nip.png";
+
+const topLeaves = (width) =>
+  `${TOP_LEAVES_BASE}/c_limit,w_${width},f_auto,q_auto/${TOP_LEAVES_ASSET}`;
+
+// Cloudinary-optimized bottom leaves
+const BOTTOM_LEAVES_BASE =
+  "https://res.cloudinary.com/djtsuktwb/image/upload";
+
+const BOTTOM_LEAVES_ASSET =
+  "v1795476902/leaves-bottom_olnclv.png";
+
+const bottomLeaves = (width) =>
+  `${BOTTOM_LEAVES_BASE}/c_limit,w_${width},f_auto,q_auto/${BOTTOM_LEAVES_ASSET}`;
 
 function AdminDashboard() {
   return (
@@ -9,10 +27,18 @@ function AdminDashboard() {
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="relative overflow-hidden rounded-[32px] border border-red-900/10 bg-[#fffdf8] px-6 py-8 shadow-sm md:px-10 md:py-10">
+          {/* Optimized Cloudinary top artwork */}
           <img
-            src={topLeaves}
+            src={topLeaves(400)}
+            srcSet={[
+              `${topLeaves(400)} 400w`,
+              `${topLeaves(800)} 800w`,
+            ].join(", ")}
+            sizes="360px"
             alt=""
             aria-hidden="true"
+            loading="eager"
+            decoding="async"
             className="pointer-events-none absolute right-[-60px] top-[-70px] w-[360px] select-none opacity-35"
           />
 
@@ -27,7 +53,8 @@ function AdminDashboard() {
             </h1>
 
             <p className="mt-4 max-w-2xl text-base leading-7 text-stone-600 md:text-lg">
-              Manage products, inventory, and orders from one place.
+              Manage products, inventory, and orders
+              from one place.
             </p>
           </div>
         </div>
@@ -49,9 +76,10 @@ function AdminDashboard() {
               </h2>
 
               <p className="mt-4 max-w-xl leading-7 text-stone-600">
-                Start building Garibaldo&apos;s online nursery catalog with
-                plant names, pricing, photos, categories, descriptions, and
-                inventory.
+                Start building Garibaldo&apos;s online
+                nursery catalog with plant names,
+                pricing, photos, categories,
+                descriptions, and inventory.
               </p>
 
               <Link
@@ -63,10 +91,20 @@ function AdminDashboard() {
               </Link>
             </div>
 
+            {/* Optimized Cloudinary bottom artwork */}
             <img
-              src={bottomLeaves}
+              src={bottomLeaves(500)}
+              srcSet={[
+                `${bottomLeaves(500)} 500w`,
+                `${bottomLeaves(1000)} 1000w`,
+              ].join(", ")}
+              sizes="480px"
+              width={1672}
+              height={941}
               alt=""
               aria-hidden="true"
+              loading="lazy"
+              decoding="async"
               className="pointer-events-none absolute bottom-[-120px] right-[-50px] w-[480px] select-none opacity-20"
             />
           </div>

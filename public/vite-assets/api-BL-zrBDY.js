@@ -1,0 +1,1 @@
+async function e(e,t={}){let n=localStorage.getItem(`authToken`)||sessionStorage.getItem(`authToken`),r={Accept:`application/json`,"Content-Type":`application/json`,...t.headers};return n&&(r.Authorization=`Bearer ${n}`),fetch(`/api${e}`,{...t,headers:r})}export{e as t};

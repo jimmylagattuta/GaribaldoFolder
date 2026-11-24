@@ -1,25 +1,96 @@
+
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
 
-    <link rel="icon" type="image/png" href="/logo-favicon.png" />
-
+    <!-- Responsive viewport -->
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0"
     />
 
+    <!-- Optimized 32x32 favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/favicon-32.png"
+    />
+
+    <!-- SEO -->
     <meta
       name="description"
       content="Garibaldo's Nursery — Bellflower & Lakewood."
     />
 
     <title>Garibaldo's Nursery</title>
+
+    <!--
+      Establish an early connection to Cloudinary.
+      Helps the browser fetch the hero poster and
+      other Cloudinary assets faster.
+    -->
+    <link
+      rel="preconnect"
+      href="https://res.cloudinary.com"
+      crossorigin
+    />
+
+    <!--
+      Mobile hero poster preload.
+
+      Only applies below 768px.
+
+      Matches heroMedia.mobile.posterSrcSet exactly
+      so the browser can reuse the preloaded image.
+
+      Poster width is capped at 720px and
+      compression is set to q_60.
+    -->
+    <link
+      rel="preload"
+      as="image"
+      fetchpriority="high"
+      media="(max-width: 767px)"
+      href="https://res.cloudinary.com/djtsuktwb/video/upload/so_2,w_720,c_limit,f_auto,q_60/v1795295565/Garidalbis_Nursery_Portrait_Smooth_1080x1920_gutoem.jpg"
+      imagesrcset="
+        https://res.cloudinary.com/djtsuktwb/video/upload/so_2,w_480,c_limit,f_auto,q_60/v1795295565/Garidalbis_Nursery_Portrait_Smooth_1080x1920_gutoem.jpg 480w,
+        https://res.cloudinary.com/djtsuktwb/video/upload/so_2,w_720,c_limit,f_auto,q_60/v1795295565/Garidalbis_Nursery_Portrait_Smooth_1080x1920_gutoem.jpg 720w
+      "
+      imagesizes="100vw"
+    />
+
+    <!--
+      Desktop hero poster preload.
+
+      Only applies at 768px and above.
+
+      Matches heroMedia.desktop.posterSrcSet exactly.
+    -->
+    <link
+      rel="preload"
+      as="image"
+      fetchpriority="high"
+      media="(min-width: 768px)"
+      href="https://res.cloudinary.com/djtsuktwb/video/upload/so_2,w_1600,c_limit,f_auto,q_auto/v1795295619/Nursury2k_2_w1as7t.jpg"
+      imagesrcset="
+        https://res.cloudinary.com/djtsuktwb/video/upload/so_2,w_960,c_limit,f_auto,q_auto/v1795295619/Nursury2k_2_w1as7t.jpg 960w,
+        https://res.cloudinary.com/djtsuktwb/video/upload/so_2,w_1600,c_limit,f_auto,q_auto/v1795295619/Nursury2k_2_w1as7t.jpg 1600w,
+        https://res.cloudinary.com/djtsuktwb/video/upload/so_2,w_1920,c_limit,f_auto,q_auto/v1795295619/Nursury2k_2_w1as7t.jpg 1920w
+      "
+      imagesizes="100vw"
+    />
   </head>
 
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+
+    <!-- Vite / React entry point -->
+    <script
+      type="module"
+      src="/src/main.jsx"
+    ></script>
   </body>
 </html>
+9

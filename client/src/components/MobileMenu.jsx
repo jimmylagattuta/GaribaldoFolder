@@ -1,6 +1,14 @@
+
 import { Link } from "react-router-dom";
 
-import bottomLeaves from "../assets/leaves-bottom.png";
+const LEAVES_BASE =
+  "https://res.cloudinary.com/djtsuktwb/image/upload";
+
+const LEAVES_ASSET =
+  "v1795476902/leaves-bottom_olnclv.png";
+
+const leavesUrl = (width) =>
+  `${LEAVES_BASE}/c_limit,w_${width}/f_auto,q_auto/${LEAVES_ASSET}`;
 
 function MobileMenu({
   menuOpen,
@@ -24,6 +32,7 @@ function MobileMenu({
       {/* Background overlay */}
       <div
         onClick={closeMenu}
+        aria-hidden="true"
         className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px] transition-opacity duration-300 md:hidden ${
           menuOpen
             ? "pointer-events-auto opacity-100"
@@ -33,6 +42,9 @@ function MobileMenu({
 
       {/* Drawer */}
       <aside
+        aria-label="Mobile navigation"
+        aria-hidden={!menuOpen}
+        inert={!menuOpen}
         className={`fixed right-0 top-0 z-50 h-[100dvh] w-[85%] max-w-sm overflow-y-auto overscroll-contain bg-[#fffdf8] shadow-2xl transition-transform duration-300 ease-out [-webkit-overflow-scrolling:touch] md:hidden ${
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
@@ -62,7 +74,7 @@ function MobileMenu({
 
           {/* Logged-in mobile identity */}
           {user && (
-            <div className="relative z-10 mx-6 mt-6 mb-2 shrink-0 rounded-2xl border border-stone-200 bg-white/80 px-5 py-4 shadow-sm">
+            <div className="relative z-10 mx-6 mb-2 mt-6 shrink-0 rounded-2xl border border-stone-200 bg-white/80 px-5 py-4 shadow-sm">
               <div className="flex items-center justify-between gap-4">
                 <div className="min-w-0">
                   <p className="truncate text-lg font-semibold text-stone-900">
@@ -141,7 +153,7 @@ function MobileMenu({
               </Link>
             )}
 
-            {/* Logged in */}
+            {/* Authentication */}
             {user ? (
               <button
                 type="button"
@@ -151,7 +163,6 @@ function MobileMenu({
                 Sign Out
               </button>
             ) : (
-              /* Logged out */
               <Link
                 to="/signin"
                 onClick={closeMenu}
@@ -164,12 +175,23 @@ function MobileMenu({
 
           {/* Bottom artwork */}
           <div className="mt-auto shrink-0">
-            <img
-              src={bottomLeaves}
-              alt=""
-              aria-hidden="true"
-              className="pointer-events-none w-full select-none object-contain"
-            />
+            {menuOpen && (
+              <img
+                src={leavesUrl(440)}
+                srcSet={[
+                  `${leavesUrl(440)} 440w`,
+                  `${leavesUrl(880)} 880w`,
+                ].join(", ")}
+                sizes="(max-width: 450px) 85vw, 384px"
+                width={1672}
+                height={941}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                decoding="async"
+                className="pointer-events-none h-auto w-full select-none object-contain"
+              />
+            )}
 
             <div className="px-6 pb-[calc(env(safe-area-inset-bottom)+40px)] text-center">
               <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-stone-500">
@@ -194,7 +216,7 @@ function ShieldIcon() {
       aria-hidden="true"
     >
       <path
-        d="M12 3L19 6V11C19 15.55 16.09 19.74 12 21C7.91 19.74 5 15.55 5 11V6L12 3Z"
+        d="M12 3L19 6V11C19 15.55 16.09 19.74 12 21C7.91 19.74 5 11V6L12 3Z"
         fill="currentColor"
       />
 

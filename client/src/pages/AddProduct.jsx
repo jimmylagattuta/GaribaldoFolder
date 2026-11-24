@@ -1,11 +1,27 @@
+
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { apiRequest } from "../lib/api";
 import { uploadProductImage } from "../lib/cloudinary";
 
-import topLeaves from "../assets/leaves-top.png";
-import bottomLeaves from "../assets/leaves-bottom.png";
+// Responsive Cloudinary top artwork (no local PNG download)
+const topLeavesUrl = (width) =>
+  `https://res.cloudinary.com/djtsuktwb/image/upload/c_limit,w_${width},f_auto,q_auto/v1795479542/leaves-top_c71nip.png`;
+
+// Cloudinary-optimized decorative artwork
+// Original aspect ratio: 1672 x 941
+const BOTTOM_LEAVES_BASE =
+  "https://res.cloudinary.com/djtsuktwb/image/upload";
+
+const BOTTOM_LEAVES_ASSET =
+  "v1795476902/leaves-bottom_olnclv.png";
+
+const bottomLeaves =
+  `${BOTTOM_LEAVES_BASE}/c_limit,w_500/f_auto,q_auto/${BOTTOM_LEAVES_ASSET}`;
+
+const bottomLeaves2x =
+  `${BOTTOM_LEAVES_BASE}/c_limit,w_1000/f_auto,q_auto/${BOTTOM_LEAVES_ASSET}`;
 
 function AddProduct() {
   const navigate = useNavigate();
@@ -113,7 +129,8 @@ function AddProduct() {
         !Number.isInteger(Number(formData.quantity))
       )
     ) {
-      errors.quantity = "Enter a valid whole-number quantity.";
+      errors.quantity =
+        "Enter a valid whole-number quantity.";
     }
 
     setFieldErrors(errors);
@@ -146,12 +163,15 @@ function AddProduct() {
       if (imageFile) {
         setUploadStatus("Uploading photo...");
 
-        uploadedImage = await uploadProductImage(imageFile);
+        uploadedImage = await uploadProductImage(
+          imageFile
+        );
       }
 
       /*
        * STEP 2:
-       * Save the product in Rails with the Cloudinary references.
+       * Save the product in Rails with the
+       * Cloudinary references.
        */
       setUploadStatus("Saving product...");
 
@@ -229,8 +249,11 @@ function AddProduct() {
       setUploadStatus("Product saved.");
 
       /*
-       * Active products immediately appear in the public shop.
-       * Inactive products return to the admin dashboard.
+       * Active products immediately appear
+       * in the public shop.
+       *
+       * Inactive products return to the
+       * admin dashboard.
        */
       if (formData.active) {
         navigate("/shop");
@@ -263,10 +286,15 @@ function AddProduct() {
 
         {/* Header */}
         <div className="relative overflow-hidden rounded-[32px] border border-red-900/10 bg-[#fffdf8] px-6 py-8 shadow-sm md:px-10 md:py-10">
+          {/* Optimized Cloudinary top artwork */}
           <img
-            src={topLeaves}
+            src={topLeavesUrl(400)}
+            srcSet={`${topLeavesUrl(400)} 400w, ${topLeavesUrl(800)} 800w`}
+            sizes="350px"
             alt=""
             aria-hidden="true"
+            loading="eager"
+            decoding="async"
             className="pointer-events-none absolute right-[-70px] top-[-90px] w-[350px] select-none opacity-30"
           />
 
@@ -280,8 +308,8 @@ function AddProduct() {
             </h1>
 
             <p className="mt-4 max-w-2xl text-base leading-7 text-stone-600 md:text-lg">
-              Add a plant or nursery product to Garibaldo&apos;s online
-              catalog.
+              Add a plant or nursery product to
+              Garibaldo&apos;s online catalog.
             </p>
           </div>
         </div>
@@ -291,10 +319,17 @@ function AddProduct() {
           onSubmit={handleSubmit}
           className="relative mt-8 overflow-hidden rounded-[32px] border border-red-900/10 bg-white p-6 shadow-sm md:p-10"
         >
+          {/* Optimized Cloudinary bottom artwork */}
           <img
             src={bottomLeaves}
+            srcSet={`${bottomLeaves} 500w, ${bottomLeaves2x} 1000w`}
+            sizes="450px"
+            width={1672}
+            height={941}
             alt=""
             aria-hidden="true"
+            loading="lazy"
+            decoding="async"
             className="pointer-events-none absolute bottom-[-140px] right-[-80px] w-[450px] select-none opacity-[0.08]"
           />
 
@@ -324,7 +359,9 @@ function AddProduct() {
                   onChange={handleChange}
                   placeholder="Example: Narrow-leaf Milkweed"
                   disabled={isSubmitting}
-                  className={getInputClasses(fieldErrors.name)}
+                  className={getInputClasses(
+                    fieldErrors.name
+                  )}
                 />
               </FieldGroup>
 
@@ -341,21 +378,45 @@ function AddProduct() {
                     value={formData.category}
                     onChange={handleChange}
                     disabled={isSubmitting}
-                    className={getInputClasses(fieldErrors.category)}
+                    className={getInputClasses(
+                      fieldErrors.category
+                    )}
                   >
-                    <option value="">Select category</option>
-                    <option value="Plants">Plants</option>
-                    <option value="Trees">Trees</option>
-                    <option value="Shrubs">Shrubs</option>
-                    <option value="Succulents">Succulents</option>
-                    <option value="Flowers">Flowers</option>
+                    <option value="">
+                      Select category
+                    </option>
+
+                    <option value="Plants">
+                      Plants
+                    </option>
+
+                    <option value="Trees">
+                      Trees
+                    </option>
+
+                    <option value="Shrubs">
+                      Shrubs
+                    </option>
+
+                    <option value="Succulents">
+                      Succulents
+                    </option>
+
+                    <option value="Flowers">
+                      Flowers
+                    </option>
+
                     <option value="Soil & Fertilizer">
                       Soil & Fertilizer
                     </option>
+
                     <option value="Garden Supplies">
                       Garden Supplies
                     </option>
-                    <option value="Other">Other</option>
+
+                    <option value="Other">
+                      Other
+                    </option>
                   </select>
                 </FieldGroup>
 
@@ -374,7 +435,9 @@ function AddProduct() {
                     onChange={handleChange}
                     placeholder="0"
                     disabled={isSubmitting}
-                    className={getInputClasses(fieldErrors.quantity)}
+                    className={getInputClasses(
+                      fieldErrors.quantity
+                    )}
                   />
                 </FieldGroup>
               </div>
@@ -444,8 +507,9 @@ function AddProduct() {
                     </p>
 
                     <p className="mt-1 text-sm leading-6 text-stone-500">
-                      Turn this off if you want to save the product without
-                      displaying it to customers yet.
+                      Turn this off if you want to save
+                      the product without displaying it
+                      to customers yet.
                     </p>
                   </div>
                 </label>
@@ -586,7 +650,9 @@ function FieldGroup({
         {label}
 
         {required && (
-          <span className="ml-1 text-red-800">*</span>
+          <span className="ml-1 text-red-800">
+            *
+          </span>
         )}
       </label>
 
@@ -618,7 +684,10 @@ function formatFileSize(bytes) {
     return `${(bytes / 1024).toFixed(1)} KB`;
   }
 
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${(
+    bytes /
+    (1024 * 1024)
+  ).toFixed(1)} MB`;
 }
 
 function ImageIcon() {

@@ -1,18 +1,55 @@
+
+import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 
+// Keep homepage eager-loaded for fast initial rendering.
 import Home from "./pages/Home";
-import Shop from "./pages/Shop";
-import Plants from "./pages/Plants";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import SignIn from "./pages/SignIn";
-import ForgotPassword from "./pages/ForgotPassword";
-import Register from "./pages/Register";
-import AdminDashboard from "./pages/AdminDashboard";
-import AddProduct from "./pages/AddProduct";
-import EditProduct from "./pages/EditProduct";
+
+// Lazy-load other pages.
+const Shop = lazy(() => import("./pages/Shop"));
+const Plants = lazy(() => import("./pages/Plants"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Locations = lazy(() => import("./pages/Locations"));
+
+const SignIn = lazy(() => import("./pages/SignIn"));
+const ForgotPassword = lazy(
+  () => import("./pages/ForgotPassword")
+);
+const Register = lazy(() => import("./pages/Register"));
+
+const AdminDashboard = lazy(
+  () => import("./pages/AdminDashboard")
+);
+const AddProduct = lazy(
+  () => import("./pages/AddProduct")
+);
+const EditProduct = lazy(
+  () => import("./pages/EditProduct")
+);
+
+function PageFallback() {
+  return (
+    <div
+      className="flex min-h-[calc(100vh-110px)] items-center justify-center bg-[#f7f2e8] px-4"
+      role="status"
+      aria-live="polite"
+    >
+      <div className="flex items-center gap-3 text-stone-600">
+        <span
+          className="h-5 w-5 animate-spin rounded-full border-2 border-stone-300 border-t-red-800"
+          aria-hidden="true"
+        />
+
+        <span className="text-sm font-medium">
+          Loading page...
+        </span>
+      </div>
+    </div>
+  );
+}
 
 function App() {
   return (
@@ -20,40 +57,52 @@ function App() {
       <Navbar />
 
       <main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/plants" element={<Plants />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
+        <Suspense fallback={<PageFallback />}>
+          <Routes>
+            <Route path="/" element={<Home />} />
 
-          <Route path="/signin" element={<SignIn />} />
+            <Route path="/shop" element={<Shop />} />
+            <Route path="/plants" element={<Plants />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
 
-          <Route
-            path="/forgot-password"
-            element={<ForgotPassword />}
-          />
+            {/* Nursery locations */}
+            <Route
+              path="/locations"
+              element={<Locations />}
+            />
 
-          <Route
-            path="/register"
-            element={<Register />}
-          />
+            <Route
+              path="/signin"
+              element={<SignIn />}
+            />
 
-          <Route
-            path="/admin"
-            element={<AdminDashboard />}
-          />
+            <Route
+              path="/forgot-password"
+              element={<ForgotPassword />}
+            />
 
-          <Route
-            path="/admin/products/new"
-            element={<AddProduct />}
-          />
+            <Route
+              path="/register"
+              element={<Register />}
+            />
 
-          <Route
-            path="/admin/products/:id/edit"
-            element={<EditProduct />}
-          />
-        </Routes>
+            <Route
+              path="/admin"
+              element={<AdminDashboard />}
+            />
+
+            <Route
+              path="/admin/products/new"
+              element={<AddProduct />}
+            />
+
+            <Route
+              path="/admin/products/:id/edit"
+              element={<EditProduct />}
+            />
+          </Routes>
+        </Suspense>
       </main>
     </div>
   );

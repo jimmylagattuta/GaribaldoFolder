@@ -1,40 +1,45 @@
-import { Link } from "react-router-dom";
+
+import VideoHero from "../components/VideoHero";
+import LocationsPreview from "../components/LocationsPreview";
+import ContactUs from "../components/ContactUs";
 
 function Home() {
   return (
-    <section className="mx-auto max-w-[1400px] px-6 py-16">
-      <h1 className="text-4xl font-bold text-stone-900">
-        Welcome to Garibaldo&apos;s Nursery
-      </h1>
+    <>
+      {/* Homepage video hero */}
+      <section className="relative isolate min-h-[75svh] overflow-hidden bg-stone-900 md:min-h-[85svh]">
+        {/* Responsive video background */}
+        <div className="absolute inset-0 z-0">
+          <VideoHero />
+        </div>
 
-      <p className="mt-4 max-w-2xl text-lg text-stone-600">
-        Quality plants, nursery products, and gardening essentials.
-      </p>
+        {/* Consistent dark overlay */}
+        <div
+          className="pointer-events-none absolute inset-0 z-10 bg-black/15 md:bg-black/25"
+          aria-hidden="true"
+        />
 
-      <div className="mt-8">
-        <Link
-          to="/shop"
-          className="inline-flex items-center gap-3 rounded-full bg-red-800 px-6 py-3.5 font-semibold text-white shadow-sm transition hover:bg-red-900 hover:shadow-md"
-        >
-          Shop Plants
+        {/* Hero content */}
+        <div className="relative z-20 mx-auto flex min-h-[75svh] max-w-[1400px] items-center px-6 py-20 sm:px-10 md:min-h-[85svh] md:px-16">
+          <div className="max-w-2xl">
+            <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+              Welcome to Garibaldo&apos;s Nursery
+            </h1>
 
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            className="h-5 w-5"
-            aria-hidden="true"
-          >
-            <path
-              d="M5 12H19M14 7L19 12L14 17"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </Link>
-      </div>
-    </section>
+            <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/90 md:text-xl">
+              Quality plants, nursery products, and
+              gardening essentials.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Locations, maps, hours, and directions */}
+      <LocationsPreview />
+
+      {/* Contact information and email form */}
+      <ContactUs />
+    </>
   );
 }
 

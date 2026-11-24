@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 import {
   Link,
@@ -5,8 +6,34 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import navbarLogo from "../assets/logo-navbar.png";
 import MobileMenu from "./MobileMenu";
+
+// =============================================
+// NAVIGATION CONFIGURATION
+//
+// false = Hide Plants and About
+// true  = Show Plants and About
+// =============================================
+const SHOW_PLANTS_AND_ABOUT = false;
+
+// Optimized Cloudinary navbar logo
+const LOGO_BASE =
+  "https://res.cloudinary.com/djtsuktwb/image/upload";
+
+const LOGO_ASSET =
+  "v1795303344/ChatGPT_Image_Sep_15_2026_09_55_53_PM_2_azyewu.png";
+
+const navbarLogoUrl = (width) =>
+  `${LOGO_BASE}/c_limit,w_${width},f_auto,q_55/${LOGO_ASSET}`;
+
+const navbarLogo = navbarLogoUrl(430);
+
+const navbarLogoSrcSet = [
+  `${navbarLogoUrl(330)} 330w`,
+  `${navbarLogoUrl(430)} 430w`,
+  `${navbarLogoUrl(660)} 660w`,
+  `${navbarLogoUrl(860)} 860w`,
+].join(", ");
 
 function getStoredUser() {
   const storedUser =
@@ -51,7 +78,10 @@ function Navbar() {
       }
     }
 
-    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener(
+      "mousedown",
+      handleOutsideClick
+    );
 
     return () => {
       document.removeEventListener(
@@ -79,11 +109,21 @@ function Navbar() {
     <>
       <header className="relative z-30 w-full border-b border-red-900/10 bg-[#fffdf8]">
         <div className="mx-auto flex min-h-[110px] max-w-[1600px] items-center justify-between px-6 py-4 lg:px-10">
-          {/* Logo */}
-          <Link to="/" className="shrink-0">
+          {/* Optimized responsive Cloudinary logo */}
+          <Link
+            to="/"
+            className="shrink-0"
+          >
             <img
               src={navbarLogo}
+              srcSet={navbarLogoSrcSet}
+              sizes="(min-width: 768px) 430px, min(330px, 65vw)"
+              width={660}
+              height={220}
               alt="Garibaldo's Nursery"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               className="h-auto w-[330px] max-w-[65vw] md:w-[430px]"
             />
           </Link>
@@ -97,19 +137,24 @@ function Navbar() {
               Shop
             </Link>
 
-            <Link
-              to="/plants"
-              className="flex h-14 items-center font-medium text-stone-700 transition hover:text-red-800"
-            >
-              Plants
-            </Link>
+            {/* Temporarily hidden navigation links */}
+            {SHOW_PLANTS_AND_ABOUT && (
+              <>
+                <Link
+                  to="/plants"
+                  className="flex h-14 items-center font-medium text-stone-700 transition hover:text-red-800"
+                >
+                  Plants
+                </Link>
 
-            <Link
-              to="/about"
-              className="flex h-14 items-center font-medium text-stone-700 transition hover:text-red-800"
-            >
-              About
-            </Link>
+                <Link
+                  to="/about"
+                  className="flex h-14 items-center font-medium text-stone-700 transition hover:text-red-800"
+                >
+                  About
+                </Link>
+              </>
+            )}
 
             <Link
               to="/contact"

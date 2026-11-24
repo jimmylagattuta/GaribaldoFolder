@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import {
   Link,
@@ -9,8 +10,13 @@ import { apiRequest } from "../lib/api";
 import { uploadProductImage } from "../lib/cloudinary";
 import DeleteProductModal from "../components/DeleteProductModal";
 
-import topLeaves from "../assets/leaves-top.png";
-import bottomLeaves from "../assets/leaves-bottom.png";
+// Cloudinary-optimized top decorative leaves
+const topLeavesUrl = (width) =>
+  `https://res.cloudinary.com/djtsuktwb/image/upload/c_limit,w_${width},f_auto,q_auto/v1795479542/leaves-top_c71nip.png`;
+
+// Cloudinary-optimized bottom decorative leaves
+const bottomLeavesUrl = (width) =>
+  `https://res.cloudinary.com/djtsuktwb/image/upload/c_limit,w_${width},f_auto,q_auto/v1795476902/leaves-bottom_olnclv.png`;
 
 function EditProduct() {
   const { id } = useParams();
@@ -31,20 +37,13 @@ function EditProduct() {
   const [imagePreview, setImagePreview] = useState(null);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] =
-    useState(false);
-
-  const [isDeleting, setIsDeleting] =
-    useState(false);
-
-  const [deleteModalOpen, setDeleteModalOpen] =
-    useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const [formError, setFormError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
-
-  const [statusMessage, setStatusMessage] =
-    useState("");
+  const [statusMessage, setStatusMessage] = useState("");
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -87,10 +86,7 @@ function EditProduct() {
           setImagePreview(product.image_url);
         }
       } catch (error) {
-        console.error(
-          "Unable to load product:",
-          error
-        );
+        console.error("Unable to load product:", error);
 
         setFormError(
           error.message ||
@@ -116,19 +112,11 @@ function EditProduct() {
   }, [imagePreview]);
 
   const handleChange = (event) => {
-    const {
-      name,
-      value,
-      type,
-      checked,
-    } = event.target;
+    const { name, value, type, checked } = event.target;
 
     setFormData((current) => ({
       ...current,
-      [name]:
-        type === "checkbox"
-          ? checked
-          : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
 
     if (fieldErrors[name]) {
@@ -149,10 +137,7 @@ function EditProduct() {
     }
 
     if (!file.type.startsWith("image/")) {
-      setFormError(
-        "Please choose a valid image file."
-      );
-
+      setFormError("Please choose a valid image file.");
       return;
     }
 
@@ -164,10 +149,7 @@ function EditProduct() {
     }
 
     setImageFile(file);
-    setImagePreview(
-      URL.createObjectURL(file)
-    );
-
+    setImagePreview(URL.createObjectURL(file));
     setFormError("");
   };
 
@@ -175,13 +157,11 @@ function EditProduct() {
     const errors = {};
 
     if (!formData.name.trim()) {
-      errors.name =
-        "Enter a product name.";
+      errors.name = "Enter a product name.";
     }
 
     if (!formData.category) {
-      errors.category =
-        "Select a category.";
+      errors.category = "Select a category.";
     }
 
     if (
@@ -189,20 +169,15 @@ function EditProduct() {
       Number.isNaN(Number(formData.price)) ||
       Number(formData.price) < 0
     ) {
-      errors.price =
-        "Enter a valid price.";
+      errors.price = "Enter a valid price.";
     }
 
     if (
       formData.quantity !== "" &&
       (
-        Number.isNaN(
-          Number(formData.quantity)
-        ) ||
+        Number.isNaN(Number(formData.quantity)) ||
         Number(formData.quantity) < 0 ||
-        !Number.isInteger(
-          Number(formData.quantity)
-        )
+        !Number.isInteger(Number(formData.quantity))
       )
     ) {
       errors.quantity =
@@ -227,70 +202,41 @@ function EditProduct() {
     setIsSubmitting(true);
 
     try {
-      let imageUrl =
-        formData.image_url;
-
-      let imagePublicId =
-        formData.image_public_id;
+      let imageUrl = formData.image_url;
+      let imagePublicId = formData.image_public_id;
 
       if (imageFile) {
-        setStatusMessage(
-          "Uploading new photo..."
+        setStatusMessage("Uploading new photo...");
+
+        const uploaded = await uploadProductImage(
+          imageFile
         );
 
-        const uploaded =
-          await uploadProductImage(
-            imageFile
-          );
-
-        imageUrl =
-          uploaded.imageUrl;
-
-        imagePublicId =
-          uploaded.publicId;
+        imageUrl = uploaded.imageUrl;
+        imagePublicId = uploaded.publicId;
       }
 
-      setStatusMessage(
-        "Saving changes..."
+      setStatusMessage("Saving changes...");
+
+      const response = await apiRequest(
+        `/products/${id}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            name: formData.name.trim(),
+            category: formData.category,
+            price: Number(formData.price),
+            quantity:
+              formData.quantity === ""
+                ? 0
+                : Number(formData.quantity),
+            description: formData.description.trim(),
+            active: formData.active,
+            image_url: imageUrl,
+            image_public_id: imagePublicId,
+          }),
+        }
       );
-
-      const response =
-        await apiRequest(
-          `/products/${id}`,
-          {
-            method: "PATCH",
-
-            body: JSON.stringify({
-              name:
-                formData.name.trim(),
-
-              category:
-                formData.category,
-
-              price:
-                Number(formData.price),
-
-              quantity:
-                formData.quantity === ""
-                  ? 0
-                  : Number(
-                      formData.quantity
-                    ),
-
-              description:
-                formData.description.trim(),
-
-              active:
-                formData.active,
-
-              image_url:
-                imageUrl,
-
-              image_public_id:
-                imagePublicId,
-            }),
-          }
-        );
 
       let data = {};
 
@@ -307,14 +253,11 @@ function EditProduct() {
         ) {
           const errors = {};
 
-          Object.entries(
-            data.errors
-          ).forEach(
+          Object.entries(data.errors).forEach(
             ([field, messages]) => {
-              errors[field] =
-                Array.isArray(messages)
-                  ? messages[0]
-                  : messages;
+              errors[field] = Array.isArray(messages)
+                ? messages[0]
+                : messages;
             }
           );
 
@@ -342,10 +285,7 @@ function EditProduct() {
 
       navigate("/shop");
     } catch (error) {
-      console.error(
-        "Update failed:",
-        error
-      );
+      console.error("Update failed:", error);
 
       setFormError(
         error.message ||
@@ -362,13 +302,12 @@ function EditProduct() {
     setFormError("");
 
     try {
-      const response =
-        await apiRequest(
-          `/products/${id}`,
-          {
-            method: "DELETE",
-          }
-        );
+      const response = await apiRequest(
+        `/products/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       let data = {};
 
@@ -400,10 +339,7 @@ function EditProduct() {
 
       navigate("/shop");
     } catch (error) {
-      console.error(
-        "Delete failed:",
-        error
-      );
+      console.error("Delete failed:", error);
 
       setFormError(
         error.message ||
@@ -422,7 +358,6 @@ function EditProduct() {
         <div className="flex justify-center">
           <div className="flex items-center gap-3 text-stone-500">
             <span className="h-5 w-5 animate-spin rounded-full border-2 border-stone-300 border-t-red-800" />
-
             Loading product...
           </div>
         </div>
@@ -441,11 +376,17 @@ function EditProduct() {
             ← Back to Shop
           </Link>
 
+          {/* Header */}
           <div className="relative overflow-hidden rounded-[32px] border border-red-900/10 bg-[#fffdf8] px-6 py-8 shadow-sm md:px-10 md:py-10">
+            {/* Optimized Cloudinary top artwork */}
             <img
-              src={topLeaves}
+              src={topLeavesUrl(400)}
+              srcSet={`${topLeavesUrl(400)} 400w, ${topLeavesUrl(800)} 800w`}
+              sizes="350px"
               alt=""
               aria-hidden="true"
+              loading="eager"
+              decoding="async"
               className="pointer-events-none absolute right-[-70px] top-[-90px] w-[350px] select-none opacity-30"
             />
 
@@ -460,20 +401,27 @@ function EditProduct() {
 
               <p className="mt-4 max-w-2xl text-base leading-7 text-stone-600 md:text-lg">
                 Update product information,
-                inventory, photo, or shop
-                visibility.
+                inventory, photo, or shop visibility.
               </p>
             </div>
           </div>
 
+          {/* Form */}
           <form
             onSubmit={handleSubmit}
             className="relative mt-8 overflow-hidden rounded-[32px] border border-red-900/10 bg-white p-6 shadow-sm md:p-10"
           >
+            {/* Optimized Cloudinary bottom artwork */}
             <img
-              src={bottomLeaves}
+              src={bottomLeavesUrl(500)}
+              srcSet={`${bottomLeavesUrl(500)} 500w, ${bottomLeavesUrl(1000)} 1000w`}
+              sizes="450px"
+              width={1672}
+              height={941}
               alt=""
               aria-hidden="true"
+              loading="lazy"
+              decoding="async"
               className="pointer-events-none absolute bottom-[-140px] right-[-80px] w-[450px] select-none opacity-[0.08]"
             />
 
@@ -497,10 +445,7 @@ function EditProduct() {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    disabled={
-                      isSubmitting ||
-                      isDeleting
-                    }
+                    disabled={isSubmitting || isDeleting}
                     className={getInputClasses(
                       fieldErrors.name
                     )}
@@ -511,22 +456,13 @@ function EditProduct() {
                   <FieldGroup
                     label="Category"
                     required
-                    error={
-                      fieldErrors.category
-                    }
+                    error={fieldErrors.category}
                   >
                     <select
                       name="category"
-                      value={
-                        formData.category
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      disabled={
-                        isSubmitting ||
-                        isDeleting
-                      }
+                      value={formData.category}
+                      onChange={handleChange}
+                      disabled={isSubmitting || isDeleting}
                       className={getInputClasses(
                         fieldErrors.category
                       )}
@@ -571,25 +507,16 @@ function EditProduct() {
 
                   <FieldGroup
                     label="Quantity Available"
-                    error={
-                      fieldErrors.quantity
-                    }
+                    error={fieldErrors.quantity}
                   >
                     <input
                       name="quantity"
                       type="number"
                       min="0"
                       step="1"
-                      value={
-                        formData.quantity
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      disabled={
-                        isSubmitting ||
-                        isDeleting
-                      }
+                      value={formData.quantity}
+                      onChange={handleChange}
+                      disabled={isSubmitting || isDeleting}
                       className={getInputClasses(
                         fieldErrors.quantity
                       )}
@@ -612,16 +539,9 @@ function EditProduct() {
                       type="number"
                       min="0"
                       step="0.01"
-                      value={
-                        formData.price
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      disabled={
-                        isSubmitting ||
-                        isDeleting
-                      }
+                      value={formData.price}
+                      onChange={handleChange}
+                      disabled={isSubmitting || isDeleting}
                       className={`${getInputClasses(
                         fieldErrors.price
                       )} pl-8`}
@@ -629,53 +549,36 @@ function EditProduct() {
                   </div>
                 </FieldGroup>
 
-                <FieldGroup
-                  label="Description"
-                >
+                <FieldGroup label="Description">
                   <textarea
                     name="description"
                     rows="6"
-                    value={
-                      formData.description
-                    }
-                    onChange={
-                      handleChange
-                    }
-                    disabled={
-                      isSubmitting ||
-                      isDeleting
-                    }
+                    value={formData.description}
+                    onChange={handleChange}
+                    disabled={isSubmitting || isDeleting}
                     className={`${getInputClasses()} resize-none`}
                   />
                 </FieldGroup>
 
+                {/* Visibility */}
                 <div className="rounded-2xl border border-stone-200 bg-[#fffdf8] p-5">
                   <label className="flex cursor-pointer items-start gap-4">
                     <input
                       type="checkbox"
                       name="active"
-                      checked={
-                        formData.active
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      disabled={
-                        isSubmitting ||
-                        isDeleting
-                      }
+                      checked={formData.active}
+                      onChange={handleChange}
+                      disabled={isSubmitting || isDeleting}
                       className="mt-1 h-5 w-5 accent-red-800"
                     />
 
                     <div>
                       <p className="font-semibold text-stone-900">
-                        Show this product
-                        in the shop
+                        Show this product in the shop
                       </p>
 
                       <p className="mt-1 text-sm leading-6 text-stone-500">
-                        Turn this off to
-                        hide the product
+                        Turn this off to hide the product
                         without deleting it.
                       </p>
                     </div>
@@ -691,8 +594,7 @@ function EditProduct() {
 
                 <label
                   className={`flex aspect-square flex-col items-center justify-center overflow-hidden rounded-[28px] border-2 border-dashed border-stone-300 bg-[#faf7f0] transition ${
-                    isSubmitting ||
-                    isDeleting
+                    isSubmitting || isDeleting
                       ? "cursor-not-allowed opacity-60"
                       : "cursor-pointer hover:border-red-800/40 hover:bg-red-50/30"
                   }`}
@@ -700,10 +602,7 @@ function EditProduct() {
                   {imagePreview ? (
                     <img
                       src={imagePreview}
-                      alt={
-                        formData.name ||
-                        "Product"
-                      }
+                      alt={formData.name || "Product"}
                       className="h-full w-full object-cover"
                     />
                   ) : (
@@ -717,9 +616,8 @@ function EditProduct() {
                       </p>
 
                       <p className="mt-2 text-sm leading-6 text-stone-500">
-                        Take a new photo or
-                        select one from your
-                        device.
+                        Take a new photo or select one
+                        from your device.
                       </p>
                     </div>
                   )}
@@ -727,13 +625,8 @@ function EditProduct() {
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={
-                      handleImageChange
-                    }
-                    disabled={
-                      isSubmitting ||
-                      isDeleting
-                    }
+                    onChange={handleImageChange}
+                    disabled={isSubmitting || isDeleting}
                     className="hidden"
                   />
                 </label>
@@ -755,21 +648,16 @@ function EditProduct() {
             {statusMessage && (
               <div className="relative z-10 mt-6 flex items-center justify-end gap-2 text-sm font-medium text-stone-600">
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-stone-300 border-t-red-800" />
-
                 {statusMessage}
               </div>
             )}
 
+            {/* Actions */}
             <div className="relative z-10 mt-10 flex flex-col gap-3 border-t border-stone-200 pt-7 sm:flex-row sm:justify-between">
               <button
                 type="button"
-                onClick={() =>
-                  setDeleteModalOpen(true)
-                }
-                disabled={
-                  isDeleting ||
-                  isSubmitting
-                }
+                onClick={() => setDeleteModalOpen(true)}
+                disabled={isDeleting || isSubmitting}
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-red-200 bg-red-50 px-6 py-3.5 font-semibold text-red-800 transition hover:border-red-300 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <TrashIcon />
@@ -780,8 +668,7 @@ function EditProduct() {
                 <Link
                   to="/shop"
                   className={`rounded-full border border-stone-300 bg-white px-6 py-3.5 text-center font-semibold text-stone-700 transition hover:bg-stone-50 ${
-                    isSubmitting ||
-                    isDeleting
+                    isSubmitting || isDeleting
                       ? "pointer-events-none opacity-50"
                       : ""
                   }`}
@@ -791,16 +678,12 @@ function EditProduct() {
 
                 <button
                   type="submit"
-                  disabled={
-                    isSubmitting ||
-                    isDeleting
-                  }
+                  disabled={isSubmitting || isDeleting}
                   className="inline-flex min-w-[150px] items-center justify-center gap-2 rounded-full bg-red-800 px-7 py-3.5 font-semibold text-white shadow-sm transition hover:bg-red-900 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <>
                       <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-
                       Saving...
                     </>
                   ) : (
@@ -813,12 +696,11 @@ function EditProduct() {
         </div>
       </section>
 
+      {/* Delete confirmation */}
       <DeleteProductModal
         product={{
           id,
-          name:
-            formData.name ||
-            "this product",
+          name: formData.name || "this product",
         }}
         isOpen={deleteModalOpen}
         isDeleting={isDeleting}
@@ -845,9 +727,7 @@ function FieldGroup({
         {label}
 
         {required && (
-          <span className="ml-1 text-red-800">
-            *
-          </span>
+          <span className="ml-1 text-red-800">*</span>
         )}
       </label>
 
@@ -926,7 +806,7 @@ function TrashIcon() {
         d="M9 7V5H15V7"
         stroke="currentColor"
         strokeWidth="1.8"
-        strokeLinejoin="round"
+        strokeLinecap="round"
       />
 
       <path

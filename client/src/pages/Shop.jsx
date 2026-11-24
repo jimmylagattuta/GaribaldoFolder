@@ -1,11 +1,25 @@
+
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { apiRequest } from "../lib/api";
 import DeleteProductModal from "../components/DeleteProductModal";
 
-import topLeaves from "../assets/leaves-top.png";
-import bottomLeaves from "../assets/leaves-bottom.png";
+// ==================================================
+// SHOP CONFIGURATION
+//
+// true  = Show the coming-soon page
+// false = Enable the full product catalog
+// ==================================================
+const SHOP_ON_HOLD = true;
+
+// Cloudinary-optimized top leaves
+const topLeavesUrl = (width) =>
+  `https://res.cloudinary.com/djtsuktwb/image/upload/c_limit,w_${width},f_auto,q_auto/v1795479542/leaves-top_c71nip.png`;
+
+// Cloudinary-optimized bottom leaves
+const bottomLeavesUrl = (width) =>
+  `https://res.cloudinary.com/djtsuktwb/image/upload/c_limit,w_${width},f_auto,q_auto/v1795476902/leaves-bottom_olnclv.png`;
 
 function getStoredUser() {
   const storedUser =
@@ -99,46 +113,41 @@ function buildSearchIndex(product) {
 
 function Shop() {
   const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] =
-    useState(true);
-
-  const [searchQuery, setSearchQuery] =
-    useState("");
-
+  const [isLoading, setIsLoading] = useState(
+    !SHOP_ON_HOLD
+  );
+  const [searchQuery, setSearchQuery] = useState("");
   const [productToDelete, setProductToDelete] =
     useState(null);
-
-  const [deletingId, setDeletingId] =
-    useState(null);
-
-  const [shopError, setShopError] =
-    useState("");
+  const [deletingId, setDeletingId] = useState(null);
+  const [shopError, setShopError] = useState("");
 
   const user = getStoredUser();
   const isAdmin = user?.role === "admin";
 
+  // Only fetch products when the shop is active.
   useEffect(() => {
+    if (SHOP_ON_HOLD) {
+      return;
+    }
+
     const loadProducts = async () => {
       try {
-        const response =
-          await apiRequest("/products");
+        const response = await apiRequest("/products");
 
         if (!response.ok) {
           setProducts([]);
-
           setShopError(
             "We couldn't load the shop right now. Please try again."
           );
-
           return;
         }
 
         const data = await response.json();
 
-        const productList =
-          Array.isArray(data)
-            ? data
-            : data.products || [];
+        const productList = Array.isArray(data)
+          ? data
+          : data.products || [];
 
         setProducts(productList);
       } catch (error) {
@@ -161,6 +170,10 @@ function Shop() {
   }, []);
 
   const filteredProducts = useMemo(() => {
+    if (SHOP_ON_HOLD) {
+      return [];
+    }
+
     const normalizedQuery =
       normalizeSearchValue(searchQuery);
 
@@ -173,8 +186,7 @@ function Shop() {
       .filter(Boolean);
 
     return products.filter((product) => {
-      const searchIndex =
-        buildSearchIndex(product);
+      const searchIndex = buildSearchIndex(product);
 
       return terms.every((term) =>
         searchIndex.includes(term)
@@ -254,6 +266,12 @@ function Shop() {
     }
   };
 
+  // Show the coming-soon card while paused,
+  // or when the active shop has no products.
+  const showComingSoon =
+    SHOP_ON_HOLD ||
+    (!isLoading && products.length === 0);
+
   return (
     <>
       <section className="min-h-[calc(100vh-110px)] bg-[#f7f2e8] px-4 py-10 md:px-8 md:py-14">
@@ -275,8 +293,8 @@ function Shop() {
             </p>
           </div>
 
-          {/* Loading */}
-          {isLoading && (
+          {/* Loading — active shop only */}
+          {!SHOP_ON_HOLD && isLoading && (
             <div className="mt-14 flex justify-center">
               <div className="flex items-center gap-3 text-stone-500">
                 <span className="h-5 w-5 animate-spin rounded-full border-2 border-stone-300 border-t-red-800" />
@@ -288,89 +306,105 @@ function Shop() {
             </div>
           )}
 
-          {/* Error */}
-          {!isLoading && shopError && (
-            <div className="mx-auto mt-8 max-w-3xl rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-center text-sm font-medium text-red-800">
-              {shopError}
-            </div>
-          )}
-
-          {/* Empty shop */}
-          {!isLoading &&
-            products.length === 0 && (
-              <div className="relative mx-auto mt-12 max-w-4xl overflow-hidden rounded-[32px] border border-red-900/10 bg-[#fffdf8] px-6 py-12 text-center shadow-sm md:px-14 md:py-16">
-                <img
-                  src={topLeaves}
-                  alt=""
-                  aria-hidden="true"
-                  className="pointer-events-none absolute right-[-70px] top-[-90px] w-[330px] select-none opacity-25"
-                />
-
-                <img
-                  src={bottomLeaves}
-                  alt=""
-                  aria-hidden="true"
-                  className="pointer-events-none absolute bottom-[-115px] left-[-55px] w-[360px] select-none opacity-20"
-                />
-
-                <div className="relative z-10">
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-red-800 text-white shadow-sm">
-                    <PlantIcon />
-                  </div>
-
-                  <p className="mt-7 text-xs font-bold uppercase tracking-[0.22em] text-red-800">
-                    Garibaldo&apos;s Nursery
-                  </p>
-
-                  <h2 className="mt-3 text-3xl font-semibold text-stone-900 md:text-4xl">
-                    Our online shop is growing.
-                  </h2>
-
-                  <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-stone-600 md:text-lg">
-                    We&apos;re adding plants,
-                    nursery products, pricing, and
-                    availability now.
-                  </p>
-
-                  <p className="mx-auto mt-3 max-w-xl text-base leading-7 text-stone-600 md:text-lg">
-                    Check back soon — or visit us
-                    in person.
-                  </p>
-
-                  <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                    {isAdmin && (
-                      <Link
-                        to="/admin/products/new"
-                        className="inline-flex items-center justify-center rounded-full bg-red-800 px-6 py-3.5 font-semibold text-white shadow-sm transition hover:bg-red-900 hover:shadow-md"
-                      >
-                        Add Product
-                      </Link>
-                    )}
-
-                    {!isAdmin && (
-                      <Link
-                        to="/contact"
-                        className="inline-flex items-center justify-center rounded-full bg-red-800 px-6 py-3.5 font-semibold text-white shadow-sm transition hover:bg-red-900 hover:shadow-md"
-                      >
-                        Contact Us
-                      </Link>
-                    )}
-
-                    <Link
-                      to="/about"
-                      className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-6 py-3.5 font-semibold text-stone-700 transition hover:border-red-800/30 hover:text-red-800"
-                    >
-                      About the Nursery
-                    </Link>
-                  </div>
-                </div>
+          {/* Error — active shop only */}
+          {!SHOP_ON_HOLD &&
+            !isLoading &&
+            shopError && (
+              <div className="mx-auto mt-8 max-w-3xl rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-center text-sm font-medium text-red-800">
+                {shopError}
               </div>
             )}
 
-          {/* Search */}
-          {!isLoading &&
+          {/* Coming soon */}
+          {showComingSoon && (
+            <div className="relative mx-auto mt-12 max-w-4xl overflow-hidden rounded-[32px] border border-red-900/10 bg-[#fffdf8] px-6 py-12 text-center shadow-sm md:px-14 md:py-16">
+              {/* Optimized Cloudinary top leaves */}
+              <img
+                src={topLeavesUrl(400)}
+                srcSet={`${topLeavesUrl(400)} 400w, ${topLeavesUrl(800)} 800w`}
+                sizes="330px"
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                decoding="async"
+                className="pointer-events-none absolute right-[-70px] top-[-90px] w-[330px] select-none opacity-25"
+              />
+
+              {/* Optimized Cloudinary bottom leaves */}
+              <img
+                src={bottomLeavesUrl(400)}
+                srcSet={`${bottomLeavesUrl(400)} 400w, ${bottomLeavesUrl(800)} 800w`}
+                sizes="360px"
+                width={1672}
+                height={941}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                decoding="async"
+                className="pointer-events-none absolute bottom-[-115px] left-[-55px] w-[360px] select-none opacity-20"
+              />
+
+              <div className="relative z-10">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-red-800 text-white shadow-sm">
+                  <PlantIcon />
+                </div>
+
+                <p className="mt-7 text-xs font-bold uppercase tracking-[0.22em] text-red-800">
+                  Garibaldo&apos;s Nursery
+                </p>
+
+                <h2 className="mt-3 text-3xl font-semibold text-stone-900 md:text-4xl">
+                  Our online shop is growing.
+                </h2>
+
+                <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-stone-600 md:text-lg">
+                  We&apos;re adding plants,
+                  nursery products, pricing, and
+                  availability now.
+                </p>
+
+                <p className="mx-auto mt-3 max-w-xl text-base leading-7 text-stone-600 md:text-lg">
+                  Check back soon — or visit us
+                  in person.
+                </p>
+
+                {/* Updated navigation buttons */}
+                <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                  {isAdmin && (
+                    <Link
+                      to="/admin/products/new"
+                      className="inline-flex items-center justify-center rounded-full bg-red-800 px-6 py-3.5 font-semibold text-white shadow-sm transition hover:bg-red-900 hover:shadow-md"
+                    >
+                      Add Product
+                    </Link>
+                  )}
+
+                  {!isAdmin && (
+                    <Link
+                      to="/contact"
+                      className="inline-flex items-center justify-center rounded-full bg-red-800 px-6 py-3.5 font-semibold text-white shadow-sm transition hover:bg-red-900 hover:shadow-md"
+                    >
+                      Contact Us
+                    </Link>
+                  )}
+
+                  <Link
+                    to="/locations"
+                    className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white px-6 py-3.5 font-semibold text-stone-700 transition hover:border-red-800/30 hover:text-red-800"
+                  >
+                    View Our Locations
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Full shop — only when enabled */}
+          {!SHOP_ON_HOLD &&
+            !isLoading &&
             products.length > 0 && (
               <>
+                {/* Search */}
                 <div className="mx-auto mt-10 max-w-3xl">
                   <div className="relative">
                     <div className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-stone-400">
@@ -407,11 +441,8 @@ function Shop() {
                     <p className="text-sm text-stone-500">
                       {searchQuery.trim() ? (
                         <>
-                          {
-                            filteredProducts.length
-                          }{" "}
-                          {filteredProducts.length ===
-                          1
+                          {filteredProducts.length}{" "}
+                          {filteredProducts.length === 1
                             ? "result"
                             : "results"}
                         </>
@@ -437,8 +468,7 @@ function Shop() {
                 </div>
 
                 {/* No search results */}
-                {filteredProducts.length ===
-                  0 && (
+                {filteredProducts.length === 0 && (
                   <div className="mx-auto mt-12 max-w-2xl rounded-[28px] border border-red-900/10 bg-[#fffdf8] px-6 py-10 text-center shadow-sm">
                     <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f7f2e8] text-red-800">
                       <SearchIcon />
@@ -452,9 +482,7 @@ function Shop() {
                       We couldn&apos;t find
                       anything matching{" "}
                       <span className="font-semibold text-stone-800">
-                        &ldquo;
-                        {searchQuery}
-                        &rdquo;
+                        &ldquo;{searchQuery}&rdquo;
                       </span>
                       .
                     </p>
@@ -472,27 +500,21 @@ function Shop() {
                 )}
 
                 {/* Product grid */}
-                {filteredProducts.length >
-                  0 && (
+                {filteredProducts.length > 0 && (
                   <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    {filteredProducts.map(
-                      (product) => (
-                        <ProductCard
-                          key={product.id}
-                          product={product}
-                          isAdmin={isAdmin}
-                          deleting={
-                            deletingId ===
-                            product.id
-                          }
-                          onDelete={() =>
-                            handleDeleteRequest(
-                              product
-                            )
-                          }
-                        />
-                      )
-                    )}
+                    {filteredProducts.map((product) => (
+                      <ProductCard
+                        key={product.id}
+                        product={product}
+                        isAdmin={isAdmin}
+                        deleting={
+                          deletingId === product.id
+                        }
+                        onDelete={() =>
+                          handleDeleteRequest(product)
+                        }
+                      />
+                    ))}
                   </div>
                 )}
               </>
@@ -500,6 +522,7 @@ function Shop() {
         </div>
       </section>
 
+      {/* Delete confirmation modal */}
       <DeleteProductModal
         product={productToDelete}
         isOpen={Boolean(productToDelete)}
@@ -532,6 +555,9 @@ function ProductCard({
             src={product.image_url}
             alt={product.name}
             loading="lazy"
+            decoding="async"
+            width="600"
+            height="600"
             className="h-full w-full object-cover"
           />
         ) : (
@@ -562,18 +588,13 @@ function ProductCard({
           <div>
             {product.price != null && (
               <p className="text-lg font-semibold text-stone-900">
-                $
-                {Number(
-                  product.price
-                ).toFixed(2)}
+                ${Number(product.price).toFixed(2)}
               </p>
             )}
 
             {product.quantity != null && (
               <p className="mt-1 text-xs text-stone-500">
-                {Number(
-                  product.quantity
-                ) > 0
+                {Number(product.quantity) > 0
                   ? `${product.quantity} available`
                   : "Currently out of stock"}
               </p>
@@ -686,7 +707,7 @@ function TrashIcon() {
         d="M9 7V5H15V7"
         stroke="currentColor"
         strokeWidth="1.8"
-        strokeLinejoin="round"
+        strokeLinecap="round"
       />
 
       <path

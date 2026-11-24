@@ -1,0 +1,1 @@
+import{t as e}from"./index-0UX5jqHu.js";var t=e();function n(){return(0,t.jsxs)(`section`,{className:`mx-auto max-w-[1400px] px-6 py-16`,children:[(0,t.jsx)(`h1`,{className:`text-4xl font-bold text-stone-900`,children:`About Us`}),(0,t.jsx)(`p`,{className:`mt-4 max-w-2xl text-stone-600`,children:`Learn more about Garibaldo's Nursery and our story.`})]})}export{n as default};
